@@ -1,33 +1,88 @@
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.io.*;
 
 class Master {
+
     public static void main(String[] args) {
-        int primesToFind;
+        try {
+            int primesToFind;
 
-        System.out.println("This program will calculate the n first prime numbers.");
-        System.out.println("Input how many prime numbers do you want to compute:");
+            System.out.println("This program will calculate the n first prime numbers.");
+            System.out.println("Input how many prime numbers do you want to compute:");
 
-        while (true) {
-            Scanner in = new Scanner(System.in);
+            while (true) {
+                Scanner in = new Scanner(System.in);
 
-            try {
-                primesToFind = in.nextInt();
-                System.out.println("Finding " + primesToFind + " prime numbers...");
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Please input a valid integer");
-                continue;
+                try {
+                    primesToFind = in.nextInt();
+                    System.out.println("Finding first " + primesToFind + " prime numbers...");
+                    break;
+                } catch (InputMismatchException e) {
+                    System.out.println("Please input a valid integer");
+                    continue;
+                }
             }
-        }
 
-        for (int i = 0; i < primesToFind; ++i) {
-            //int id = Bag.getId();
-            //Bag.addTask(id, i);
+            ExecutorService engine = Executors.newFixedThreadPool(10);
+
+            List<Worker> listOfWorkers = new ArrayList<Worker>();
+
+            for (int i = 1; i <= primesToFind; ++i) {
+                //int id = Bag.getId();
+                //Bag.addTask(id, i);
+                Worker worker = new Worker(i);
+                listOfWorkers.add(worker);
+            }
+
+            List<Integer> results = null;
+
+            List<Future<Integer>> futures = engine.invokeAll(listOfWorkers);
+
+            results = new ArrayList<Integer>();
+
+            for (int i = 0; i < futures.size(); ++i) {
+                Future<Integer> future = futures.get(i);
+                Integer result = future.get();
+
+                results.add(result);
+            }
+
+            Collections.sort(results);
+
+            for (int i = 0; i < results.size(); i++) {
+                System.out.printf("The %d. prime is: " + results.get(i), i);
+                System.out.println();
+            }
+
+            engine.shutdown();
+
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        } catch (ExecutionException e) {
+            System.out.println(e);
+        }
+    }
+}
+
+class Worker implements Callable<Integer> {
+    int numberToFind;
+    int result = 0;
+
+    public Worker(int number) {
+        this.numberToFind = number;
+    }
+
+    public Integer call() {
+        result = (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
+        return result;
+    }
+
+    public int fact(int n) {
+        if (n==0) {
+            return 1;
+        } else {
+            return (n*fact(n-1));
         }
     }
 }
