@@ -1,16 +1,15 @@
 import java.util.concurrent.Callable;
 
-class Worker implements Callable<Integer> {
+class Task implements Callable<Integer> {
     int ID;
-    Bag taskBag;
     int result = 0;
 
-    public Worker(int ID, Bag taskBag) {
+    public Task(int ID) {
         this.ID = ID;
-        this.taskBag = taskBag;
     }
 
     public Integer call() {
+        /*
         while(true){
 
             while(taskBag.isEmpty()){
@@ -27,9 +26,13 @@ class Worker implements Callable<Integer> {
 
 
         }
+        */
 
+        return 1;
+    }
 
-        return result;
+    public int getID() {
+        return ID;
     }
 
     public int fact(int n) {

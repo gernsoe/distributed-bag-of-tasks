@@ -1,29 +1,24 @@
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 class Bag {
-    ConcurrentHashMap<Integer,Integer> taskBag;
-    int oldestID = 1;
+    private Queue<Task> taskBag = new LinkedList<>(){};
+    public static List<Future<Integer>> futures = new ArrayList<Future<Integer>>() {};
 
     public void Bag(){
-        this.taskBag = new ConcurrentHashMap<>();
-    }
-
-    public void addTask(int id, int i) {
-        taskBag.put(id,i);
-    }
-
-    public Tuple getOldestTask() {
-        int ret = oldestID;
-        oldestID++;
-        return new Tuple(ret,taskBag.get(ret));
 
     }
 
-    public boolean isEmpty(){
-        return taskBag.isEmpty();
+    public void addTask(Task task) {
+        taskBag.add(task);
     }
 
+    public Task getTask() { return taskBag.poll(); }
 
+    public List<Future<Integer>> getFutures() { return futures; }
+
+    public void addFuture(Future f) { futures.add(f); }
 
 }
 

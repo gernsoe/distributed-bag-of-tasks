@@ -1,68 +1,85 @@
 import java.util.*;
 import java.util.concurrent.*;
-import java.io.*;
 
-class Master {
+class UI {
+    public static  Bag bag = new Bag();
 
     public static void main(String[] args) {
-        try {
-            int primesToFind;
-            Bag taskBag = new Bag();
+        int primesToFind;
 
-            System.out.println("This program will calculate the n first prime numbers.");
+        Workers workers = new Workers(bag);
+        Thread masterThread = new Thread(workers);
+        masterThread.start();
+
+        System.out.println("This program will calculate the n first prime numbers. Press \"r\" for results and \"q\" to quit.");
+
+        while(true) {
             System.out.println("Input how many prime numbers do you want to compute:");
 
-            while (true) {
-                Scanner in = new Scanner(System.in);
+            Scanner in = new Scanner(System.in);
 
-                try {
-                    primesToFind = in.nextInt();
-                    System.out.println("Finding first " + primesToFind + " prime numbers...");
-                    break;
-                } catch (InputMismatchException e) {
-                    System.out.println("Please input a valid integer");
-                    continue;
+            String input  = in.next();
+
+            if (input.equals("r")) {
+                getResults();
+            }
+            else if (input.equals("q")) {
+                System.exit(0);
+            }
+            else {
+                primesToFind = Integer.parseInt(input);
+                System.out.println("Finding first " + primesToFind + " prime numbers...");
+
+                for (int i = 1; i <= primesToFind; ++i) {
+                    Task task = new Task(i);
+                    bag.addTask(task);
+                    System.out.println("Added task " + i + " to the bag");
                 }
             }
+        }
+    }
 
-            ExecutorService engine = Executors.newFixedThreadPool(10);
-
-            List<Worker> listOfWorkers = new ArrayList<Worker>();
-
-            for (int i = 1; i <= primesToFind; ++i) {
-                //int id = Bag.getId();
-                //Bag.addTask(id, i);
-                Worker worker = new Worker(i,taskBag);
-                listOfWorkers.add(worker);
-            }
-
-            List<Integer> results = null;
-
-            List<Future<Integer>> futures = engine.invokeAll(listOfWorkers);
-
-            results = new ArrayList<Integer>();
-
+    public static void getResults() {
+        try {
+            List<Future<Integer>> futures = bag.getFutures();
             for (int i = 0; i < futures.size(); ++i) {
-                Future<Integer> future = futures.get(i);
-                Integer result = future.get();
-
-                results.add(result);
+                Integer result = futures.get(i).get();
+                System.out.println("The " + i + ". result is: " + result);
             }
-
-            Collections.sort(results);
-
-            for (int i = 0; i < results.size(); i++) {
-                System.out.printf("The %d. prime is: " + results.get(i), i);
-                System.out.println();
-            }
-
-            engine.shutdown();
-
         } catch (InterruptedException e) {
             System.out.println(e);
         } catch (ExecutionException e) {
             System.out.println(e);
         }
+    }
+}
+
+class Workers implements Runnable {
+    Bag bag;
+
+    public Workers(Bag bag) {
+        this.bag = bag;
+    }
+
+    public void run() {
+        try {
+            ExecutorService engine = Executors.newFixedThreadPool(10);
+            while (true) {
+                Task task;
+
+                while (true) {
+                    task = bag.getTask();
+                    if (task == null) {
+                        Thread.sleep(1000);
+                    } else {
+                        break;
+                    }
+                }
+
+                bag.addFuture(engine.submit(task));
+                System.out.println("Started working on task with id: " + task.getID());
+            }
+        } catch (InterruptedException e) {}
     }
 }
 
