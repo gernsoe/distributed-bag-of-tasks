@@ -7,6 +7,7 @@ class Master {
     public static void main(String[] args) {
         try {
             int primesToFind;
+            Bag taskBag = new Bag();
 
             System.out.println("This program will calculate the n first prime numbers.");
             System.out.println("Input how many prime numbers do you want to compute:");
@@ -31,7 +32,7 @@ class Master {
             for (int i = 1; i <= primesToFind; ++i) {
                 //int id = Bag.getId();
                 //Bag.addTask(id, i);
-                Worker worker = new Worker(i);
+                Worker worker = new Worker(i,taskBag);
                 listOfWorkers.add(worker);
             }
 
@@ -65,24 +66,4 @@ class Master {
     }
 }
 
-class Worker implements Callable<Integer> {
-    int numberToFind;
-    int result = 0;
 
-    public Worker(int number) {
-        this.numberToFind = number;
-    }
-
-    public Integer call() {
-        result = (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
-        return result;
-    }
-
-    public int fact(int n) {
-        if (n==0) {
-            return 1;
-        } else {
-            return (n*fact(n-1));
-        }
-    }
-}
