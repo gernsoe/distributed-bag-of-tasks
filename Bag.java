@@ -3,12 +3,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 class Bag {
-    public Queue<Task> taskBag;
-    public List<Future<Integer>> futures;
+    private Queue<Task> taskBag;
+    public static List<Future<Integer>> futures;
 
     public Bag(){
         this.taskBag = new LinkedList<Task>(){};
-        this.futures = new ArrayList<Future<Integer>>(){};
+        this.futures = new ArrayList<Future<Integer>>() {};
     }
 
     public void addTask(Task task) {
