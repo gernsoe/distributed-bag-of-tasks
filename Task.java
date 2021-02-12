@@ -27,19 +27,16 @@ class Task implements Callable<Integer> {
 
         }
         */
+        result = 1;
 
         return 1;
     }
 
+    public int getResult() {
+        return result;
+    }
     public int getID() {
         return ID;
     }
 
-    public int fact(int n) {
-        if (n==0) {
-            return 1;
-        } else {
-            return (n*fact(n-1));
-        }
-    }
 }
