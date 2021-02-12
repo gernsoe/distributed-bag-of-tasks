@@ -2,10 +2,12 @@ import java.util.*;
 import java.util.concurrent.*;
 
 class UI {
-    public static  Bag bag = new Bag();
+    public static Bag bag;
 
     public static void main(String[] args) {
         int primesToFind;
+
+        bag = new Bag();
 
         Workers workers = new Workers(bag);
         Thread masterThread = new Thread(workers);
