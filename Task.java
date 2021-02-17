@@ -1,38 +1,19 @@
 import java.util.concurrent.Callable;
 
 class Task implements Callable<Integer> {
-    int ID;
+    int numberToFind;
     int result = 0;
 
-    public Task(int ID) {
-        this.ID = ID;
+    public Task(int numberToFind) {
+        this.numberToFind = numberToFind;
     }
 
     public Integer call() {
-        /*
-        while(true){
-
-            while(taskBag.isEmpty()){
-                try{wait();} catch (InterruptedException e){}
-            }
-
-            Tuple task = taskBag.getOldestTask();
-            int taskID = task.getKey();
-            int numberToFind = task.getValue();
-
-            result = (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
-
-            taskBag.addTask();
-
-
-        }
-        */
-
-        return 1;
+        return (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
     }
 
-    public int getID() {
-        return ID;
+    public int getNumberToFind() {
+        return numberToFind;
     }
 
     public int fact(int n) {

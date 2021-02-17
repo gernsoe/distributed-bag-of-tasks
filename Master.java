@@ -79,7 +79,7 @@ class Workers implements Runnable {
                 }
 
                 bag.addFuture(engine.submit(task));
-                System.out.println("Started working on task with id: " + task.getID());
+                System.out.println("Started working on task with input: " + task.getNumberToFind());
             }
         } catch (InterruptedException e) {}
     }
