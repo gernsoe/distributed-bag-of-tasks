@@ -1,2 +1,2 @@
 # distributed-bag-of-tasks
-Bachelor project to distribute a bag of tasks model
+Warmup project to Bachelor project of distribute a bag of tasks model
