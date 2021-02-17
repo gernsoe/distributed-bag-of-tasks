@@ -14,13 +14,12 @@ class UI {
         masterThread.start();
 
         System.out.println("This program will calculate the n first prime numbers. Press \"r\" for results and \"q\" to quit.");
+        System.out.println("Input how many prime numbers do you want to compute:");
 
         while(true) {
-            System.out.println("Input how many prime numbers do you want to compute:");
-
             Scanner in = new Scanner(System.in);
 
-            String input  = in.next();
+            String input = in.next();
 
             if (input.equals("r")) {
                 getResults();
@@ -28,7 +27,7 @@ class UI {
             else if (input.equals("q")) {
                 System.exit(0);
             }
-            else {
+            else if (isInt(input)){
                 primesToFind = Integer.parseInt(input);
                 System.out.println("Finding first " + primesToFind + " prime numbers...");
 
@@ -53,6 +52,16 @@ class UI {
         } catch (ExecutionException e) {
             System.out.println(e);
         }
+    }
+
+    public static boolean isInt(String input) {
+        try {
+            Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("Please input a valid positive integer.");
+            return false;
+        }
+        return true;
     }
 }
 
