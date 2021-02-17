@@ -33,7 +33,7 @@ class UI {
                 System.out.println("Finding first " + primesToFind + " prime numbers...");
 
                 for (int i = 1; i <= primesToFind; ++i) {
-                    Task task = new subTask(i);
+                    Task task = new primeTask(i);
                     bag.addTask(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
@@ -79,7 +79,7 @@ class Workers implements Runnable {
                 }
 
                 bag.addFuture(engine.submit(task));
-                System.out.println("Started working on task with input: " + task.getNumberToFind());
+                System.out.println("Started working on task with input: " + task.getID());
             }
         } catch (InterruptedException e) {}
     }
