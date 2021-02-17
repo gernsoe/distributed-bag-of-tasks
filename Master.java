@@ -2,8 +2,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 class UI {
-    public static Bag bag;
 
+    public static Bag bag;
     public static void main(String[] args) {
         int primesToFind;
 
@@ -33,7 +33,7 @@ class UI {
                 System.out.println("Finding first " + primesToFind + " prime numbers...");
 
                 for (int i = 1; i <= primesToFind; ++i) {
-                    Task task = new Task(i);
+                    Task task = new subTask(i);
                     bag.addTask(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
