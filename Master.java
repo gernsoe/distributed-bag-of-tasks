@@ -7,11 +7,7 @@ class UI {
     public static void main(String[] args) {
         int primesToFind;
 
-        bag = new Bag();
-
-        Workers workers = new Workers(bag);
-        Thread masterThread = new Thread(workers);
-        masterThread.start();
+        bag = new Bag(10);
 
         System.out.println("This program will calculate the n first prime numbers. Press \"r\" for results and \"q\" to quit.");
         System.out.println("Input how many prime numbers do you want to compute:");
@@ -21,13 +17,7 @@ class UI {
 
             String input = in.next();
 
-            if (input.equals("r")) {
-                getResults();
-            }
-            else if (input.equals("q")) {
-                System.exit(0);
-            }
-            else if (isInt(input)){
+            if (isInt(input)){
                 primesToFind = Integer.parseInt(input);
                 System.out.println("Finding first " + primesToFind + " prime numbers...");
 
@@ -36,6 +26,7 @@ class UI {
                     bag.addTask(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
+                break;
             }
         }
     }
@@ -65,33 +56,6 @@ class UI {
     }
 }
 
-class Workers implements Runnable {
-    Bag bag;
 
-    public Workers(Bag bag) {
-        this.bag = bag;
-    }
-
-    public void run() {
-        try {
-            ExecutorService engine = Executors.newFixedThreadPool(10);
-            while (true) {
-                Task task;
-
-                while (true) {
-                    task = bag.getTask();
-                    if (task == null) {
-                        Thread.sleep(1000);
-                    } else {
-                        break;
-                    }
-                }
-
-                bag.addFuture(engine.submit(task));
-                System.out.println("Started working on task with input: " + task.getID());
-            }
-        } catch (InterruptedException e) {}
-    }
-}
 
 
