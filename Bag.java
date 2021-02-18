@@ -55,9 +55,6 @@ class Worker extends Thread {
             System.out.println("Started working on task with input: " + task.getID());
 
             task.run();
-
-            System.out.println("The result of task: " + task.getID() + " is: " + task.getResult());
-
         }
     }
 }

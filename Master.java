@@ -6,6 +6,7 @@ class UI {
     public static Bag bag;
     public static void main(String[] args) {
         int primesToFind;
+        List<Task> tasks = new ArrayList<>(){};
 
         bag = new Bag(10);
 
@@ -24,6 +25,7 @@ class UI {
                 for (int i = 1; i <= primesToFind; ++i) {
                     Task task = new primeTask(i);
                     bag.addTask(task);
+                    tasks.add(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
                 break;
@@ -33,6 +35,10 @@ class UI {
             Thread.sleep(10000);
         } catch (InterruptedException e) {}
 
+        for (int i = 0; i < tasks.size(); ++i) {
+            Task task = tasks.get(i);
+            System.out.println("The result of task: " + task.getID() + ". is: " + task.getResult());
+        }
     }
 
     /*
