@@ -29,8 +29,13 @@ class UI {
                 break;
             }
         }
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {}
+
     }
 
+    /*
     public static void getResults() {
         try {
             List<Future<Integer>> futures = bag.getFutures();
@@ -44,6 +49,7 @@ class UI {
             System.out.println(e);
         }
     }
+    */
 
     public static boolean isInt(String input) {
         try {
