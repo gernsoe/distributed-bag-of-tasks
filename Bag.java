@@ -3,17 +3,16 @@ import java.util.concurrent.*;
 
 class Bag {
 
-    private ArrayList<Worker> workers;
+    private List<Worker> workers;
     private BlockingQueue<Task> taskBag;
-    public static List<Future<Integer>> futures;
-
 
     public Bag(int numberOfWorkers){
         this.taskBag = new LinkedBlockingQueue<>(){};
-        this.futures = new ArrayList<Future<Integer>>() {};
         this.workers = new ArrayList<>(){};
         for (int i = 0; i < numberOfWorkers; ++i) {
-            workers.add(new Worker(this));
+            Worker worker = new Worker(this);
+            worker.start();
+            workers.add(worker);
         }
     }
 
@@ -33,10 +32,13 @@ class Bag {
         return task;
     }
 
-    public List<Future<Integer>> getFutures() { return futures; }
+    public void getResult() {
+        Iterator i = workers.iterator();
 
-    public void addFuture(Future f) { futures.add(f); }
-
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }
+    }
 }
 
 class Worker extends Thread {
@@ -53,6 +55,9 @@ class Worker extends Thread {
             System.out.println("Started working on task with input: " + task.getID());
 
             task.run();
+
+            System.out.println("The result of task: " + task.getID() + " is: " + task.getResult());
+
         }
     }
 }
