@@ -6,11 +6,11 @@ class UI {
     public static Bag bag;
     public static void main(String[] args) {
         int primesToFind;
-        List<Task> tasks = new ArrayList<>(){};
+        List<Task> tasks = new ArrayList<Task>(){};
 
         bag = new Bag(10);
 
-        System.out.println("This program will calculate the n first prime numbers. Press \"r\" for results and \"q\" to quit.");
+        System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
 
         while(true) {
@@ -31,31 +31,11 @@ class UI {
                 break;
             }
         }
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {}
 
-        for (int i = 0; i < tasks.size(); ++i) {
-            Task task = tasks.get(i);
-            System.out.println("The result of task: " + task.getID() + ". is: " + task.getResult());
+        for (Task t : tasks) {
+            System.out.println("The result of task: " + t.getID() + ". is: " + t.getResult());
         }
     }
-
-    /*
-    public static void getResults() {
-        try {
-            List<Future<Integer>> futures = bag.getFutures();
-            for (int i = 0; i < futures.size(); ++i) {
-                Integer result = futures.get(i).get();
-                System.out.println("The " + i + ". result is: " + result);
-            }
-        } catch (InterruptedException e) {
-            System.out.println(e);
-        } catch (ExecutionException e) {
-            System.out.println(e);
-        }
-    }
-    */
 
     public static boolean isInt(String input) {
         try {
