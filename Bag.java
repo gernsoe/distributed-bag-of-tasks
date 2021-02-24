@@ -46,7 +46,7 @@ class Worker extends Thread {
         while (true) {
             Task task = bag.getTask();
 
-            System.out.println("Started working on task with input: " + task.getID());
+            System.out.println("Started working on a task");
 
             task.run();
         }
