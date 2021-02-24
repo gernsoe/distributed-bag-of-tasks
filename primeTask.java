@@ -1,9 +1,9 @@
 public class primeTask extends Task {
     int numberToFind;
 
-    public primeTask(int ID){
-        super(ID);
-        this.numberToFind = ID;
+    public primeTask(int numberToFind){
+
+        this.numberToFind = numberToFind;
     }
 
     @Override
@@ -22,5 +22,9 @@ public class primeTask extends Task {
         } else {
             return (n*fact(n-1));
         }
+    }
+
+    public int getInput() {
+        return numberToFind;
     }
 }

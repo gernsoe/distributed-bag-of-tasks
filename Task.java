@@ -1,12 +1,11 @@
 import java.util.concurrent.Callable;
 
 abstract class Task implements Callable<Integer>, Runnable {
-    int ID;
     Boolean isDone = false;
     Integer result;
 
-    public Task(int ID) {
-        this.ID = ID;
+    public Task() {
+
     }
 
     public synchronized Integer getResult() {
@@ -24,9 +23,4 @@ abstract class Task implements Callable<Integer>, Runnable {
         isDone = true;
         notifyAll();
     }
-
-    public int getID() {
-        return ID;
-    }
-
 }

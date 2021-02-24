@@ -33,7 +33,7 @@ class UI {
         }
 
         for (Task t : tasks) {
-            System.out.println("The result of task: " + t.getID() + ". is: " + t.getResult());
+            System.out.println("The result is: " + t.getResult());
         }
     }
 
