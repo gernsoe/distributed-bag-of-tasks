@@ -2,13 +2,9 @@ package bag_of_tasks;
 
 import java.util.concurrent.Callable;
 
-abstract class Task<T> implements Callable<T>, Runnable {
+public abstract class Task<T> implements Callable<T>, Runnable {
     Boolean isDone = false;
     T result;
-
-    public Task() {
-
-    }
 
     public void run(){
         T r;
