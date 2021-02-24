@@ -1,5 +1,6 @@
+package bag_of_tasks;
+
 import java.util.*;
-import java.util.concurrent.*;
 
 class UI {
 

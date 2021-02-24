@@ -1,4 +1,6 @@
-public class primeTask extends Task {
+package bag_of_tasks;
+
+class primeTask extends Task {
     int numberToFind;
 
     public primeTask(int numberToFind){

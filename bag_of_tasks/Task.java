@@ -1,3 +1,5 @@
+package bag_of_tasks;
+
 import java.util.concurrent.Callable;
 
 abstract class Task<T> implements Callable<T>, Runnable {
