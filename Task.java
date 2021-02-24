@@ -27,6 +27,9 @@ abstract class Task<T> implements Callable<T>, Runnable {
     }
 
     public synchronized void setResult(T result) {
+        if(isDone){
+            return;
+        }
         this.result = result;
         isDone = true;
         notifyAll();
