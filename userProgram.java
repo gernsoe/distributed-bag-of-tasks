@@ -8,6 +8,8 @@ class userProgram {
 
         Master bagMaster = new Master(10);
 
+        Bag bag = new Bag(10);
+
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
 
@@ -30,7 +32,12 @@ class userProgram {
         }
 
         for (Task t : futures) {
-            System.out.println("The result is: " + t.getResult());
+            try {
+                System.out.println("The result is: " + t.getResult());
+            } catch (Exception e) {
+                System.out.print(e);
+            }
+
         }
     }
 

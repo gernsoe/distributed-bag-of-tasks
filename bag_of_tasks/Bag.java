@@ -3,7 +3,7 @@ package bag_of_tasks;
 import java.util.*;
 import java.util.concurrent.*;
 
-class Bag {
+public class Bag {
 
     private BlockingQueue<Task> taskBag;
     private List<Worker> workers;
