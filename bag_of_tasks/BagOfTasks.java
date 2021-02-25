@@ -1,9 +1,9 @@
 package bag_of_tasks;
 
-public class Master {
-    public static Bag bag;
+public class BagOfTasks {
+    private Bag bag;
 
-    public Master(int numberOfWorkers){
+    public BagOfTasks(int numberOfWorkers){
         bag = new Bag(numberOfWorkers);
     }
 

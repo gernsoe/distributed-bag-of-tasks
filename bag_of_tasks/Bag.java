@@ -8,8 +8,7 @@ class Bag {
     private BlockingQueue<Task> taskBag;
     private List<Worker> workers;
 
-
-    public Bag(int numberOfWorkers){
+    protected Bag(int numberOfWorkers){
         this.taskBag = new LinkedBlockingQueue<Task>(){};
         this.workers = new ArrayList<Worker>(){};
         for (int i = 0; i < numberOfWorkers; ++i) {
@@ -19,14 +18,14 @@ class Bag {
         }
     }
 
-    public void addTask(Task task) {
+    protected void addTask(Task task) {
         try {
             taskBag.put(task);
         } catch (InterruptedException e) {}
 
     }
 
-    public Task getTask() {
+    protected Task getTask() {
         Task task = null;
         try {
             task = taskBag.take();
@@ -40,7 +39,7 @@ class Bag {
 class Worker extends Thread {
     Bag bag;
 
-    public Worker(Bag bag) {
+    protected Worker(Bag bag) {
         this.bag = bag;
     }
 

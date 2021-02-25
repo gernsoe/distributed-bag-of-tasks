@@ -6,7 +6,7 @@ class userProgram {
         int primesToFind;
         List<Task> futures = new ArrayList<Task>(){};
 
-        Master bagMaster = new Master(10);
+        BagOfTasks bag = new BagOfTasks(10);
 
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
@@ -21,7 +21,7 @@ class userProgram {
 
                 for (int i = 1; i <= primesToFind; ++i) {
                     Task task = new primeTask(i);
-                    bagMaster.submitTask(task);
+                    bag.submitTask(task);
                     futures.add(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
