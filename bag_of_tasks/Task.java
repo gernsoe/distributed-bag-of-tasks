@@ -4,24 +4,33 @@ import java.util.concurrent.Callable;
 
 public abstract class Task<T> implements Callable<T>, Runnable {
     Boolean isDone = false;
+    String errorMsg = null;
     T result;
 
     public void run(){
         T r;
         try{
           r = call();
-        } catch(Exception e){return;}
-        setResult(r);
+          setResult(r);
+        } catch(Exception e){
+            errorMsg = "This task failed: " + e;
+            isDone = true;
+            return;
+        }
     }
 
-    public synchronized T getResult() {
+    public synchronized T getResult() throws Exception {
         while(!isDone){
             try{
                 wait();
             }catch(InterruptedException e){}
         }
 
-        return result;
+        if (errorMsg == null) {
+            return result;
+        } else {
+            throw new Exception(errorMsg);
+        }
     }
 
     public synchronized void setResult(T result) {
