@@ -8,8 +8,6 @@ class userProgram {
 
         BagOfTasks bag = new BagOfTasks(10);
 
-        Bag bag = new Bag(10);
-
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
 
