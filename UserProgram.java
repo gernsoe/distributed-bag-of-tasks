@@ -1,12 +1,12 @@
 import bag_of_tasks.*;
 import java.util.*;
 
-class userProgram {
+class UserProgram {
     public static void main(String[] args) {
         int primesToFind;
         List<Task> futures = new ArrayList<Task>(){};
 
-        BagOfTasks bag = new BagOfTasks(10);
+        SingleBag bag = new SingleBag(0);
 
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
@@ -20,7 +20,7 @@ class userProgram {
                 System.out.println("Finding first " + primesToFind + " prime numbers...");
 
                 for (int i = 1; i <= primesToFind; ++i) {
-                    Task task = new primeTask(i);
+                    Task task = new PrimeTask(i);
                     bag.submitTask(task);
                     futures.add(task);
                     System.out.println("Added task " + i + " to the bag");
@@ -50,10 +50,10 @@ class userProgram {
     }
 }
 
-class primeTask extends Task {
+class PrimeTask extends Task {
     int numberToFind;
 
-    public primeTask(int numberToFind){
+    public PrimeTask(int numberToFind){
         this.numberToFind = numberToFind;
     }
 

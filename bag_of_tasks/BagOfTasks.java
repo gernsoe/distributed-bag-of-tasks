@@ -1,13 +1,10 @@
 package bag_of_tasks;
 
-public class BagOfTasks {
-    private Bag bag;
+public abstract class BagOfTasks {
 
-    public BagOfTasks(int numberOfWorkers){
-        bag = new Bag(numberOfWorkers);
-    }
+    Bag localBag;
 
     public void submitTask(Task task){
-        bag.addTask(task);
+        localBag.addTask(task);
     }
 }
