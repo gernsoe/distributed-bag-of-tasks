@@ -1,2 +1,2 @@
 # distributed-bag-of-tasks
-Warmup project to Bachelor project of distribute a bag of tasks model
+Bachelor project: Distributed bag of tasks, DTU 2021
