@@ -10,7 +10,7 @@ class DistributedUserProgram {
         int primesToFind;
         List<Task> futures = new ArrayList<Task>(){};
 
-        BagOfTasks masterBag = new MasterBag(1);
+        MasterBag masterBag = new MasterBag(1);
         UserNode node = new UserNode(5,masterBag);
         Thread thread = new Thread(node);
         thread.start();

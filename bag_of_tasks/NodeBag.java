@@ -10,7 +10,7 @@ public class NodeBag extends BagOfTasks {
 
     public void takeTaskFromMaster(){
         Task t = mastersBag.getTask();
-        submitTask(t);
+        localBag.addTask(t);
     }
 
 }

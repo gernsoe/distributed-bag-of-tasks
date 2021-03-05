@@ -21,7 +21,7 @@ class UserProgram {
 
                 for (int i = 1; i <= primesToFind; ++i) {
                     Task task = new PrimeTask(i);
-                    bag.submitTask(task);
+                    //bag.submitTask(task);
                     futures.add(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
