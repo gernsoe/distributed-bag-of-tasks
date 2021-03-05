@@ -7,6 +7,7 @@ class Bag {
 
     private BlockingQueue<Task> taskBag;
     private List<Worker> workers;
+    private HashMap<Integer, Task> waitingForResults;
 
     protected Bag(int numberOfWorkers){
         this.taskBag = new LinkedBlockingQueue<Task>(){};
