@@ -70,9 +70,7 @@ class DistributedUserProgram {
                 System.out.println("spam");
             }
         }
-
     }
-
 }
 
 
