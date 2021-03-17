@@ -1,21 +1,25 @@
 package bag_of_tasks;
 
-import java.util.HashMap;
+import java.rmi.RemoteException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MasterBag extends BagOfTasks {
 
-    protected int taskCount = 0;
-    protected HashMap<Integer, Task> waitingForResults;
+    protected LinkedBlockingQueue<Task> finishedTasks = new LinkedBlockingQueue<Task>();
 
-    public MasterBag(int numberOfWorkers){
-       this.waitingForResults = new HashMap<Integer, Task>();
+    public MasterBag(int numberOfWorkers) throws RemoteException {
        localBag = new Bag(numberOfWorkers);
     }
 
-    // Midlertidig løsning - tasks bliver tilføjet til "waitingForResult" her,
-    // TODO: tilføj først tasks til "waitingForResults" når tasken sendes til en node bag
     public void submitTask(Task t) {
         localBag.addTask(t);
-        waitingForResults.put(++taskCount, t);
+    }
+
+    public Task getTaskForRemote(){
+        return localBag.getTask();
+    }
+
+    public void addFinishedTask(Task task){
+        finishedTasks.add(task);
     }
 }

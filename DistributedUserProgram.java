@@ -1,12 +1,13 @@
 import bag_of_tasks.*;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 class DistributedUserProgram {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException {
         int primesToFind;
         List<Task> futures = new ArrayList<Task>(){};
 
