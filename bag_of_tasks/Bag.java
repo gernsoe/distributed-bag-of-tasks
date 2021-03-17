@@ -45,12 +45,16 @@ class Worker extends Thread {
 
     public void run() {
         while (true) {
-            Task task = bag.getTask();
-
-            System.out.println("Started working on a task");
-
-            task.run();
+            work();
         }
+    }
+
+    public void work() {
+        Task task = bag.getTask();
+
+        System.out.println("Started working on a task");
+
+        task.run();
     }
 }
 

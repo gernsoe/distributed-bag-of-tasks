@@ -3,6 +3,7 @@ package bag_of_tasks;
 import java.util.concurrent.Callable;
 
 public abstract class Task<T> implements Callable<T>, Runnable {
+    int ID;
     Boolean isDone = false;
     String errorMsg = null;
     T result;
@@ -41,4 +42,13 @@ public abstract class Task<T> implements Callable<T>, Runnable {
         isDone = true;
         notifyAll();
     }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
 }
