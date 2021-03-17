@@ -1,5 +1,6 @@
 import bag_of_tasks.*;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +8,12 @@ import java.util.Scanner;
 
 class DistributedUserProgram {
 
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args) throws RemoteException, AlreadyBoundException, InterruptedException {
         int primesToFind;
         List<Task> futures = new ArrayList<Task>(){};
 
-        MasterBag masterBag = new MasterBag(1);
+        MasterBag masterBag = new MasterBag(0);
+        MasterBag.register();
 
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
