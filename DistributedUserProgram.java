@@ -1,5 +1,6 @@
 import bag_of_tasks.*;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,9 +12,6 @@ class DistributedUserProgram {
         List<Task> futures = new ArrayList<Task>(){};
 
         MasterBag masterBag = new MasterBag(1);
-        UserNode node = new UserNode(5,masterBag);
-        Thread thread = new Thread(node);
-        thread.start();
 
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
@@ -54,22 +52,6 @@ class DistributedUserProgram {
             return false;
         }
         return true;
-    }
-
-    public static class UserNode extends Thread{
-
-        NodeBag node;
-
-        UserNode(int numberOfWorkers, BagOfTasks masterBag){
-            node = new NodeBag(numberOfWorkers, masterBag);
-        }
-
-        public void run(){
-            while(true){
-                node.takeTaskFromMaster();
-                System.out.println("spam");
-            }
-        }
     }
 }
 
