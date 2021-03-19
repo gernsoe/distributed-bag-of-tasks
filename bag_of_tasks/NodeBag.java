@@ -7,9 +7,9 @@ public class NodeBag extends BagOfTasks {
     MasterAPI stub;
 
     public NodeBag(int numberOfWorkers, String hostname) {
-        localBag = new Bag(numberOfWorkers);
-
+        super();
         int port = 1099;
+        initWorkers(numberOfWorkers);
         try {
             Registry registry = LocateRegistry.getRegistry(hostname,port);
             this.stub = (MasterAPI) registry.lookup("BoT");
@@ -20,8 +20,31 @@ public class NodeBag extends BagOfTasks {
     }
 
     public void takeTaskFromMaster() throws RemoteException {
-        Task t = stub.getRemoteTask();
-        localBag.addTask(t);
+        Task task = stub.getRemoteTask();
+        addTask(task);
+    }
+
+    public void initWorkers(int numberOfWorkers){
+        for (int i = 0; i < numberOfWorkers; ++i) {
+            Worker worker = new NodeWorker(this);
+            worker.start();
+            workers.add(worker);
+        }
+    }
+
+
+}
+
+class NodeWorker extends Worker {
+    NodeBag nodeBag;
+    public NodeWorker(NodeBag nodeBag){
+        this.nodeBag = nodeBag;
+    }
+
+    public void work() throws RemoteException {
+        Task task = nodeBag.getTask();
+        task.run();
+        nodeBag.stub.returnFinishedTask(task);
     }
 }
 

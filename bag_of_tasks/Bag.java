@@ -1,4 +1,4 @@
-package bag_of_tasks;
+/*package bag_of_tasks;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -6,13 +6,13 @@ import java.util.concurrent.*;
 class Bag {
 
     private BlockingQueue<Task> taskBag;
-    private List<Worker> workers;
+    private List<OldWorker> workers;
 
     protected Bag(int numberOfWorkers){
         this.taskBag = new LinkedBlockingQueue<Task>(){};
-        this.workers = new ArrayList<Worker>(){};
+        this.workers = new ArrayList<OldWorker>(){};
         for (int i = 0; i < numberOfWorkers; ++i) {
-            Worker worker = new Worker(this);
+            OldWorker worker = new OldWorker(this);
             worker.start();
             workers.add(worker);
         }
@@ -36,11 +36,13 @@ class Bag {
 
 }
 
-class Worker extends Thread {
+class OldWorker extends Thread {
     Bag bag;
+    Boolean master;
 
-    protected Worker(Bag bag) {
+    protected OldWorker(Bag bag, boolean master) {
         this.bag = bag;
+        this.master = master;
     }
 
     public void run() {
@@ -58,4 +60,6 @@ class Worker extends Thread {
 
     }
 }
+
+ */
 

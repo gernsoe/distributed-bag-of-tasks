@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class DistributedUserProgram {
+class MasterUser {
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, InterruptedException {
         int primesToFind;
-        List<Task> futures = new ArrayList<Task>(){};
+        setHost(args);
 
         MasterBag masterBag = new MasterBag(0);
         MasterBag.register();
@@ -29,16 +29,15 @@ class DistributedUserProgram {
                 for (int i = 1; i <= primesToFind; ++i) {
                     Task task = new PrimeTask(i);
                     masterBag.submitTask(task);
-                    futures.add(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
                 break;
             }
         }
 
-        for (Task t : futures) {
+        for (int i = 1; i <= primesToFind; ++i) {
             try {
-                System.out.println("The result is: " + t.getResult());
+                System.out.println("The result is: " + masterBag.getFinishedTask().getResult());
             } catch (Exception e) {
                 System.out.print(e);
             }
@@ -53,6 +52,21 @@ class DistributedUserProgram {
             return false;
         }
         return true;
+    }
+
+    public static void setHost(String[] ipv4){
+        try {
+            if (ipv4[0].equals("marc")) {
+                System.setProperty("java.rmi.server.hostname", "80.162.217.75");
+            } else {
+                System.setProperty("java.rmi.server.hostname", ipv4[0]);
+            }
+        }catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Please supply host public ipv4 address as argument");
+            System.exit(0);
+        }
+
+        System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
     }
 }
 
