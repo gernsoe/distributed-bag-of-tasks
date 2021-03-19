@@ -55,6 +55,7 @@ class Worker extends Thread {
         System.out.println("Started working on a task");
 
         task.run();
+
     }
 }
 

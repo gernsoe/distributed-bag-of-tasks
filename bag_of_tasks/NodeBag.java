@@ -6,11 +6,10 @@ import java.rmi.registry.Registry;
 public class NodeBag extends BagOfTasks {
     MasterAPI stub;
 
-    public NodeBag(int numberOfWorkers) {
+    public NodeBag(int numberOfWorkers, String hostname) {
         localBag = new Bag(numberOfWorkers);
 
-        String hostname = "192.168.0.107";
-        int port = 5000;
+        int port = 1099;
         try {
             Registry registry = LocateRegistry.getRegistry(hostname,port);
             this.stub = (MasterAPI) registry.lookup("BoT");
