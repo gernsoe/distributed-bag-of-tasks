@@ -31,8 +31,6 @@ public class NodeBag extends BagOfTasks {
             workers.add(worker);
         }
     }
-
-
 }
 
 class NodeWorker extends Worker {
