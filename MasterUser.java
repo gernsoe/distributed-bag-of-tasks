@@ -1,12 +1,19 @@
 import bag_of_tasks.*;
-import java.util.*;
 
-class UserProgram {
-    public static void main(String[] args) {
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class MasterUser {
+
+    public static void main(String[] args) throws RemoteException, AlreadyBoundException, InterruptedException {
         int primesToFind;
-        List<Task> futures = new ArrayList<Task>(){};
+        setHost(args);
 
-        SingleBag bag = new SingleBag(0);
+        MasterBag masterBag = new MasterBag(0);
+        MasterBag.register();
 
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
@@ -21,17 +28,16 @@ class UserProgram {
 
                 for (int i = 1; i <= primesToFind; ++i) {
                     Task task = new PrimeTask(i);
-                    //bag.submitTask(task);
-                    futures.add(task);
+                    masterBag.submitTask(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
                 break;
             }
         }
 
-        for (Task t : futures) {
+        for (int i = 1; i <= primesToFind; ++i) {
             try {
-                System.out.println("The result is: " + t.getResult());
+                System.out.println("The result is: " + masterBag.getFinishedTask().getResult());
             } catch (Exception e) {
                 System.out.print(e);
             }
@@ -48,29 +54,20 @@ class UserProgram {
         }
         return true;
     }
-}
 
-class PrimeTask extends Task {
-    int numberToFind;
-
-    public PrimeTask(int numberToFind){
-        this.numberToFind = numberToFind;
-    }
-
-    public Integer call(){
-        return (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
-    }
-
-    public int fact(int n) {
-        if (n==0) {
-            return 1;
-        } else {
-            return (n*fact(n-1));
+    public static void setHost(String[] ipv4){
+        try {
+            if (ipv4[0].equals("marc")) {
+                System.setProperty("java.rmi.server.hostname", "80.162.217.75");
+            } else {
+                System.setProperty("java.rmi.server.hostname", ipv4[0]);
+            }
+        }catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Please supply host public ipv4 address as argument");
+            System.exit(0);
         }
-    }
 
-    public int getInput() {
-        return numberToFind;
+        System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
     }
 }
 

@@ -1,8 +1,9 @@
 package bag_of_tasks;
 
+import java.io.Serializable;
 import java.util.concurrent.Callable;
 
-public abstract class Task<T> implements Callable<T>, Runnable {
+public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
     int ID;
     Boolean isDone = false;
     String errorMsg = null;
@@ -21,12 +22,12 @@ public abstract class Task<T> implements Callable<T>, Runnable {
     }
 
     public synchronized T getResult() throws Exception {
-        while(!isDone){
-            try{
+        /*while(!isDone) {
+            try {
                 wait();
-            }catch(InterruptedException e){}
-        }
-
+            } catch (InterruptedException e) {
+            }
+        }*/
         if (errorMsg == null) {
             return result;
         } else {
@@ -35,12 +36,12 @@ public abstract class Task<T> implements Callable<T>, Runnable {
     }
 
     public synchronized void setResult(T result) {
-        if(isDone){
+        /*if(isDone){
             return;
-        }
+        }*/
         this.result = result;
-        isDone = true;
-        notifyAll();
+        //isDone = true;
+        //notifyAll();
     }
 
     public int getID() {
