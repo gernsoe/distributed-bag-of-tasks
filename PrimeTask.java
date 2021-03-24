@@ -7,7 +7,8 @@ public class PrimeTask extends Task {
         this.numberToFind = numberToFind;
     }
 
-    public Integer call(){
+    public Integer call() throws InterruptedException {
+        Thread.sleep(1000);
         return (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
     }
 
