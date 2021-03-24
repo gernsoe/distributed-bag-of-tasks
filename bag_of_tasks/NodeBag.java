@@ -44,6 +44,7 @@ class NodeWorker extends Worker {
         Task task = nodeBag.getTask();
         task.run();
         nodeBag.stub.returnFinishedTask(task);
+        System.out.println("Finished task");
     }
 }
 
