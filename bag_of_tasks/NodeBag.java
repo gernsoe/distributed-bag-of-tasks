@@ -40,7 +40,8 @@ class NodeWorker extends Worker {
     }
 
     public void work() throws RemoteException {
-        Task task = nodeBag.stub.getRemoteTask();
+        //nodeBag.takeTaskFromMaster();
+        Task task = nodeBag.getTask();
         task.run();
         nodeBag.stub.returnFinishedTask(task);
     }
