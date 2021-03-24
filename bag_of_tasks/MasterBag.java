@@ -5,11 +5,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MasterBag extends BagOfTasks implements MasterAPI {
 
+public class MasterBag extends BagOfTasks implements MasterAPI {
+    protected ConcurrentHashMap<Integer, Task> remoteTasks = new ConcurrentHashMap<Integer, Task>();
     protected LinkedBlockingQueue<Task> finishedTasks = new LinkedBlockingQueue<Task>();
+    int counter = 0;
+
     private static MasterAPI api;
 
     public MasterBag(int numberOfWorkers) throws RemoteException {
@@ -19,7 +23,10 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     }
 
     public void submitTask(Task t) {
+        t.setID(counter);
         addTask(t);
+        remoteTasks.put(counter,t);
+        counter++;
     }
 
     public Task getRemoteTask(){
@@ -31,7 +38,11 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     }
 
     public void returnFinishedTask(Task task){
-        finishedTasks.add(task);
+        //finishedTasks.add(task);
+        try {
+            remoteTasks.get(task.getID()).setResult(task.getResult());
+        } catch (Exception e){}
+
     }
 
     public static void register() throws RemoteException, InterruptedException , AlreadyBoundException {
