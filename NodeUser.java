@@ -7,10 +7,6 @@ public class NodeUser {
         setHost(args);
 
         NodeBag node = new NodeBag(5, args[0]);
-
-        while (true) {
-            node.takeTaskFromMaster();
-        }
     }
 
     public static void setHost(String[] ipv4){
