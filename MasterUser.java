@@ -1,18 +1,21 @@
 import bag_of_tasks.*;
 
+import java.lang.reflect.Array;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.LinkedBlockingQueue;
 
 class MasterUser {
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, InterruptedException {
+        ArrayList<Task> futures = new ArrayList<Task>();
         int primesToFind;
         setHost(args);
 
-        MasterBag masterBag = new MasterBag(0);
+        MasterBag masterBag = new MasterBag(1);
         MasterBag.register();
 
         System.out.println("This program will calculate the n first prime numbers.");
@@ -29,19 +32,19 @@ class MasterUser {
                 for (int i = 1; i <= primesToFind; ++i) {
                     Task task = new PrimeTask(i);
                     masterBag.submitTask(task);
+                    futures.add(task);
                     System.out.println("Added task " + i + " to the bag");
                 }
                 break;
             }
         }
 
-        for (int i = 1; i <= primesToFind; ++i) {
+        for(Task t : futures){
             try {
-                System.out.println("The result is: " + masterBag.getFinishedTask().getResult());
-            } catch (Exception e) {
-                System.out.print(e);
-            }
+                System.out.println("The result of task with ID "+t.getID()+" is:"+t.getResult());
+            } catch (Exception e){}
         }
+
     }
 
     public static boolean isInt(String input) {

@@ -40,9 +40,10 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     public void returnFinishedTask(Task task){
         //finishedTasks.add(task);
         try {
+            //System.out.println("før");
             remoteTasks.get(task.getID()).setResult(task.getResult());
+            //System.out.println("efter");
         } catch (Exception e){}
-
     }
 
     public static void register() throws RemoteException, InterruptedException , AlreadyBoundException {
