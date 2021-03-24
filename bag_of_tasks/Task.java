@@ -22,12 +22,12 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
     }
 
     public synchronized T getResult() throws Exception {
-        /*while(!isDone) {
+        while(!isDone) {
             try {
                 wait();
             } catch (InterruptedException e) {
             }
-        }*/
+        }
         if (errorMsg == null) {
             return result;
         } else {
@@ -36,12 +36,12 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
     }
 
     public synchronized void setResult(T result) {
-        /*if(isDone){
+        if(isDone){
             return;
-        }*/
+        }
         this.result = result;
-        //isDone = true;
-        //notifyAll();
+        isDone = true;
+        notifyAll();
     }
 
     public int getID() {

@@ -19,7 +19,6 @@ public abstract class BagOfTasks {
         try {
             taskBag.put(task);
         } catch (InterruptedException e) {}
-
     }
 
     protected Task getTask() {
