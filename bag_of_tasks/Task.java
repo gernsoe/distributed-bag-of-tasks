@@ -7,7 +7,7 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
     int ID;
     Boolean isDone = false;
     String errorMsg = null;
-    T result;
+    private T result;
 
     public void run(){
         T r;
