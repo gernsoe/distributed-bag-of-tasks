@@ -1,5 +1,4 @@
 package bag_of_tasks;
-import jdk.nashorn.internal.runtime.ECMAException;
 
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
@@ -19,6 +18,8 @@ public class NodeBag extends BagOfTasks {
             System.out.println("Nodebag failed with: " + e);
         }
         initWorkers(numberOfWorkers);
+        TaskRetriever taskRetriever = new TaskRetriever(this);
+        taskRetriever.start();
     }
 
     public void initWorkers(int numberOfWorkers){
@@ -48,13 +49,15 @@ class TaskRetriever extends Thread {
     }
 
     public void run() {
-        try {
-            if (nodeBag.taskBag.size() <= taskThreshold) {
-                nodeBag.takeTaskFromMaster(tasksToRetrieve);
-            }
-            Thread.sleep(5000);
-        } catch (InterruptedException | RemoteException e) {}
-
+        while (true) {
+            try {
+                if (nodeBag.taskBag.size() <= taskThreshold) {
+                    nodeBag.takeTaskFromMaster(tasksToRetrieve);
+                    System.out.println("Retrieved tasks");
+                }
+                Thread.sleep(3000);
+            } catch (InterruptedException | RemoteException e) {}
+        }
     }
 }
 
@@ -64,7 +67,7 @@ class NodeWorker extends Worker {
         this.nodeBag = nodeBag;
     }
 
-    public void work() throws RemoteException {
+    public void work() {
         Task task = nodeBag.getTask();
         task.run();
         try {
