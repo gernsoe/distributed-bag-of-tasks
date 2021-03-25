@@ -26,6 +26,34 @@ public class NodeBag extends BagOfTasks {
             workers.add(worker);
         }
     }
+
+    public void takeTaskFromMaster(int tasksToRetrieve) throws RemoteException {
+        for (int i = 0; i < tasksToRetrieve; i++) {
+            Task task = stub.getRemoteTask();
+            addTask(task);
+        }
+    }
+}
+
+class TaskRetriever extends Thread {
+
+    NodeBag nodeBag;
+    int taskThreshold = 2;
+    int tasksToRetrieve = 4;
+
+    protected TaskRetriever(NodeBag nodeBag) {
+        this.nodeBag = nodeBag;
+    }
+
+    public void run() {
+        try {
+            if (nodeBag.taskBag.size() <= taskThreshold) {
+                nodeBag.takeTaskFromMaster(tasksToRetrieve);
+            }
+            Thread.sleep(5000);
+        } catch (InterruptedException | RemoteException e) {}
+
+    }
 }
 
 class NodeWorker extends Worker {
@@ -35,7 +63,7 @@ class NodeWorker extends Worker {
     }
 
     public void work() throws RemoteException {
-        Task task = nodeBag.stub.getRemoteTask();
+        Task task = nodeBag.getTask();
         task.run();
         nodeBag.stub.returnFinishedTask(task);
         System.out.println("Finished task");
