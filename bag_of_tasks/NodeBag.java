@@ -1,4 +1,6 @@
 package bag_of_tasks;
+import jdk.nashorn.internal.runtime.ECMAException;
+
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -37,7 +39,9 @@ class NodeWorker extends Worker {
     public void work() throws RemoteException {
         Task task = nodeBag.stub.getRemoteTask();
         task.run();
-        nodeBag.stub.returnFinishedTask(task);
+        try {
+            nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
+        }catch(Exception e){}
         System.out.println("Finished task");
     }
 }

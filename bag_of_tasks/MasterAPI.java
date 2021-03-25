@@ -4,6 +4,6 @@ import java.rmi.*;
 public interface MasterAPI extends Remote{
 
     public Task getRemoteTask() throws RemoteException;
-    public void returnFinishedTask(Task task) throws RemoteException;
+    public <T> void returnFinishedTask(T result, int ID) throws RemoteException;
 
 }  

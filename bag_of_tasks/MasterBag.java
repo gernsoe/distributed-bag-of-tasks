@@ -37,11 +37,11 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         return finishedTasks.take();
     }
 
-    public void returnFinishedTask(Task task){
+    public <T> void returnFinishedTask(T result, int ID){
         //finishedTasks.add(task);
         try {
             //System.out.println("før");
-            remoteTasks.get(task.getID()).setResult(task.getResult());
+            remoteTasks.get(ID).setResult(result);
             //System.out.println("efter");
         } catch (Exception e){}
     }
@@ -74,6 +74,8 @@ class MasterWorker extends Worker {
         Task task = masterBag.getTask();
         System.out.println("MasterWorker started on task");
         task.run();
-        masterBag.returnFinishedTask(task);
+        try {
+            masterBag.returnFinishedTask(task.getResult(), task.getID());
+        }catch(Exception e){}
     }
 }
