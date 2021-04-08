@@ -6,12 +6,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
     protected ConcurrentHashMap<Integer, Task> remoteTasks = new ConcurrentHashMap<Integer, Task>();
-    protected LinkedBlockingQueue<Task> finishedTasks = new LinkedBlockingQueue<Task>();
     int counter = 0;
 
     private static MasterAPI api;
@@ -33,24 +30,16 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         return getTask();
     }
 
-    public Task getFinishedTask() throws InterruptedException{
-        return finishedTasks.take();
-    }
-
     public <T> void returnFinishedTask(T result, int ID){
-        //finishedTasks.add(task);
         try {
-            //System.out.println("før");
             remoteTasks.get(ID).setResult(result);
-            //System.out.println("efter");
         } catch (Exception e){}
     }
 
-    public static void register() throws RemoteException, InterruptedException , AlreadyBoundException {
-        MasterAPI stub = (MasterAPI) UnicastRemoteObject.exportObject(api,1100);
+    public static void register() throws RemoteException, AlreadyBoundException {
+        MasterAPI stub = (MasterAPI) UnicastRemoteObject.exportObject(api,1099);
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.bind("BoT",stub);
-
         System.out.print("Master Bag registered");
     }
 

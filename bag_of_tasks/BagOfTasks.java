@@ -7,24 +7,24 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class BagOfTasks {
 
-    protected BlockingQueue<Task> taskBag;
+    protected ExtendedQueue<Task> taskBag;
     protected List<Worker> workers;
 
     protected BagOfTasks(){
-        this.taskBag = new LinkedBlockingQueue<Task>(){};
+        this.taskBag = new ExtendedQueue<Task>(){};
         this.workers = new ArrayList<Worker>(){};
     }
 
     protected void addTask(Task task) {
         try {
-            taskBag.put(task);
+            taskBag.ePut(task);
         } catch (InterruptedException e) {}
     }
 
     protected Task getTask() {
         Task task = null;
         try {
-            task = taskBag.take();
+            task = taskBag.eTake();
         } catch (InterruptedException e) {}
 
         return task;
