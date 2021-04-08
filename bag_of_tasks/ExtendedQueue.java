@@ -8,20 +8,24 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
 
     public ExtendedQueue(){
         super();
-        this.threshold = threshold;
     }
 
-    public synchronized T eTake() throws  InterruptedException{
+    public T eTake() throws  InterruptedException{
         T e = take();
-        notify();
+        synchronized (this) {
+            notify();
+        }
         return e;
     }
 
-    public synchronized void ePut(T e) throws InterruptedException{
+    public void ePut(T e) throws InterruptedException{
         while(size() >= threshold){
-            try{ wait();
-            }catch(InterruptedException err){
-                System.out.println("ePut was interrupted");
+            synchronized (this) {
+                try {
+                    wait();
+                } catch (InterruptedException err) {
+                    System.out.println("ePut was interrupted");
+                }
             }
         }
         put(e);

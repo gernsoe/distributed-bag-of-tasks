@@ -18,7 +18,7 @@ public abstract class BagOfTasks {
     protected void addTask(Task task) {
         try {
             taskBag.ePut(task);
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {System.out.println("?");}
     }
 
     protected Task getTask() {
