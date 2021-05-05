@@ -5,34 +5,63 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
-    protected ConcurrentHashMap<Integer, Task> remoteTasks = new ConcurrentHashMap<Integer, Task>();
-    int counter = 0;
+    protected ConcurrentHashMap<UUID, Task> remoteTasks = new ConcurrentHashMap<UUID, Task>(); //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
 
+
+    protected DependencyGraph continuations;
     private static MasterAPI api;
 
     public MasterBag(int numberOfWorkers) throws RemoteException {
        super();
+       this.continuations = new DependencyGraph(taskBag);
        initWorkers(numberOfWorkers);
        api = this;
     }
 
     public void submitTask(Task t) {
-        t.setID(counter);
         addTask(t);
-        remoteTasks.put(counter,t);
-        counter++;
+        remoteTasks.put(t.getID(),t);
     }
+
+    public synchronized Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
+        SystemTask sysTask = new SystemTask() {
+            @Override
+            public Object call() throws Exception {
+                return inputFunction.exec(parameter1);
+            }
+        };
+        sysTask.setType(TaskType.CONTINUE);
+        sysTask.setPredecessor_1_ID(predecessor.getID());
+
+        submitIfReady(sysTask, predecessor);
+
+        return sysTask;
+    }
+
+    protected synchronized void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
+        if(predecessor.getIsDone()){
+            sysTask.setParameter(predecessor.getID(),predecessor.getResult());
+            addTask(sysTask);
+        }else{
+            continuations.addContinuation(predecessor,sysTask);
+        }
+    }
+
 
     public Task getRemoteTask(){
         return getTask();
     }
 
-    public <T> void returnFinishedTask(T result, int ID){
+    public <T> void returnFinishedTask(T result, UUID ID){
         try {
             remoteTasks.get(ID).setResult(result);
+            synchronized (this) {
+                continuations.releaseContinuations(remoteTasks.get(ID));
+            }
         } catch (Exception e){}
     }
 

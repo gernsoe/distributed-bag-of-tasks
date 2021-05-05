@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 class MasterUser {
 
-    public static void main(String[] args) throws RemoteException, AlreadyBoundException, InterruptedException {
+    public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         ArrayList<Task> futures = new ArrayList<Task>();
         int primesToFind;
         setHost(args);
@@ -18,6 +18,13 @@ class MasterUser {
         MasterBag masterBag = new MasterBag(1);
         MasterBag.register();
 
+        Task t1 = new squareTask(2);
+        Task t2 = masterBag.continueWith(t1,(result) -> 3+(int)result);
+        masterBag.submitTask(t1);
+        futures.add(t1);
+        futures.add(t2);
+
+        /*
         System.out.println("This program will calculate the n first prime numbers.");
         System.out.println("Input how many prime numbers do you want to compute:");
 
@@ -38,6 +45,8 @@ class MasterUser {
                 break;
             }
         }
+
+        */
 
         for(Task t : futures){
             try {

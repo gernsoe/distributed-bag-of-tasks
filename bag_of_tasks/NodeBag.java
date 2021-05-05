@@ -9,6 +9,7 @@ public class NodeBag extends BagOfTasks {
 
     public NodeBag(int numberOfWorkers, String hostname) {
         super();
+        taskBag.setThreshold(1);
         int port = 1099;
         try {
             Registry registry = LocateRegistry.getRegistry(hostname,port);
@@ -30,19 +31,15 @@ public class NodeBag extends BagOfTasks {
         }
     }
 
-    public void takeTaskFromMaster(int tasksToRetrieve) throws RemoteException {
-        for (int i = 0; i < tasksToRetrieve; i++) {
+    public void takeTaskFromMaster() throws RemoteException {
             Task task = stub.getRemoteTask();
             addTask(task);
-        }
     }
 }
 
 class TaskRetriever extends Thread {
 
     NodeBag nodeBag;
-    int taskThreshold = 2;
-    int tasksToRetrieve = 4;
 
     protected TaskRetriever(NodeBag nodeBag) {
         this.nodeBag = nodeBag;
@@ -51,12 +48,8 @@ class TaskRetriever extends Thread {
     public void run() {
         while (true) {
             try {
-                if (nodeBag.taskBag.size() <= taskThreshold) {
-                    nodeBag.takeTaskFromMaster(tasksToRetrieve);
-                    System.out.println("Retrieved tasks");
-                }
-                Thread.sleep(3000);
-            } catch (InterruptedException | RemoteException e) {}
+                nodeBag.takeTaskFromMaster();
+            } catch (RemoteException e) {}
         }
     }
 }

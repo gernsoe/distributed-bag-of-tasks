@@ -8,8 +8,18 @@ public class PrimeTask extends Task {
     }
 
     public Integer call() throws InterruptedException{
-        Thread.sleep(1000);
-        return (int) Math.floor((fact(numberToFind)%(numberToFind+1))/numberToFind)*(numberToFind-1)+2;
+        //Thread.sleep(1);
+        int counter = 0;
+        for(int i=0; i < Integer.MAX_VALUE-50; i++){
+            for(int j=0; j < 10; j++){
+                counter++;
+                if(counter > (Integer.MAX_VALUE/2)){
+                    System.out.println("Reset!");
+                    counter = 0;
+                }
+            }
+        }
+        return counter;
     }
 
     public int fact(int n) {
