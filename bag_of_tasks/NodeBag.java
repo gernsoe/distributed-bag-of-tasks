@@ -32,7 +32,9 @@ public class NodeBag extends BagOfTasks {
     }
 
     public void takeTaskFromMaster() throws RemoteException {
+
             Task task = stub.getRemoteTask();
+
             addTask(task);
     }
 }
@@ -61,7 +63,9 @@ class NodeWorker extends Worker {
     }
 
     public void work() {
+
         Task task = nodeBag.getTask();
+
         task.run();
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());

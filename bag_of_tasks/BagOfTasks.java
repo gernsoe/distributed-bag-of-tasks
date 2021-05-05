@@ -26,7 +26,7 @@ public abstract class BagOfTasks {
         try {
             task = taskBag.eTake();
         } catch (InterruptedException e) {}
-
+        System.out.println("ReturningTask");
         return task;
     }
 

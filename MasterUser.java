@@ -15,14 +15,14 @@ class MasterUser {
         int primesToFind;
         setHost(args);
 
-        MasterBag masterBag = new MasterBag(1);
+        MasterBag masterBag = new MasterBag(0);
         MasterBag.register();
 
         Task t1 = new squareTask(2);
-        Task t2 = masterBag.continueWith(t1,(result) -> 3+(int)result);
+        //Task t2 = masterBag.continueWith(t1,(result) -> 3+(int)result);
         masterBag.submitTask(t1);
         futures.add(t1);
-        futures.add(t2);
+        //futures.add(t2);
 
         /*
         System.out.println("This program will calculate the n first prime numbers.");
