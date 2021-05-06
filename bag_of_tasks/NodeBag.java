@@ -16,7 +16,7 @@ public class NodeBag extends BagOfTasks {
             this.stub = (MasterAPI) registry.lookup("BoT");
             System.out.println("Stub received from: "+hostname);
         } catch (Exception e ) {
-            System.out.println("Nodebag failed with: " + e);
+            e.printStackTrace();
         }
         initWorkers(numberOfWorkers);
         TaskRetriever taskRetriever = new TaskRetriever(this);
@@ -51,7 +51,9 @@ class TaskRetriever extends Thread {
         while (true) {
             try {
                 nodeBag.takeTaskFromMaster();
-            } catch (RemoteException e) {}
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
@@ -69,7 +71,7 @@ class NodeWorker extends Worker {
         task.run();
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
-        }catch(Exception e){}
+        }catch(Exception e){e.printStackTrace();}
         System.out.println("Finished task");
     }
 }

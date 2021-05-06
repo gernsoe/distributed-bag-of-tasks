@@ -18,15 +18,16 @@ public abstract class BagOfTasks {
     protected void addTask(Task task) {
         try {
             taskBag.ePut(task);
-        } catch (InterruptedException e) {System.out.println("?");}
+        } catch (InterruptedException e) {e.printStackTrace();}
     }
 
     protected Task getTask() {
         Task task = null;
         try {
             task = taskBag.eTake();
-        } catch (InterruptedException e) {}
-        System.out.println("ReturningTask");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return task;
     }
 

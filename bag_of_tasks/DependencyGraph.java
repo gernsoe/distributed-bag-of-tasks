@@ -6,11 +6,11 @@ import java.util.concurrent.BlockingQueue;
 
 public class DependencyGraph {
     Map<Task, Set<SystemTask>> dependencyMap;
-    BlockingQueue<Task> taskBag;
+    MasterBag masterBag;
 
-    public DependencyGraph(BlockingQueue<Task> taskBag) {
+    public DependencyGraph(MasterBag masterBag) {
         dependencyMap = new HashMap<Task, Set<SystemTask>>();
-        this.taskBag = taskBag;
+        this.masterBag = masterBag;
     }
 
     public void addContinuation(Task dependant, SystemTask continueTask) {
@@ -31,21 +31,9 @@ public class DependencyGraph {
         Set<SystemTask> continueSet = dependencyMap.remove(task);
         for(SystemTask continueTask : continueSet){
             continueTask.setParameter(task.getID(), task.getResult());
-            if(!containsSysTask(continueTask)){
-                taskBag.add(continueTask);
+            if(continueTask.getIsReady()){
+                masterBag.submitTask(continueTask);
             }
         }
     }
-
-    public Boolean containsSysTask(SystemTask sysTask){
-        Boolean b = false;
-        for(Map.Entry<Task, Set<SystemTask>> entry : dependencyMap.entrySet()) {
-            Set<SystemTask> set = entry.getValue();
-            if(set.contains(sysTask)){
-                b = true;
-            }
-        }
-        return b;
-    }
-
 }

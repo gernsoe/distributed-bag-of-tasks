@@ -24,7 +24,7 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
                 try {
                     wait();
                 } catch (InterruptedException err) {
-                    System.out.println("ePut was interrupted");
+                    err.printStackTrace();
                 }
             }
         }

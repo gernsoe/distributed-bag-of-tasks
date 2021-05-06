@@ -1,5 +1,7 @@
 package bag_of_tasks;
 
-public interface ContinueInput<A,T>{
+import java.io.Serializable;
+
+public interface ContinueInput<A,T> extends Serializable{
     T exec(A result);
 }

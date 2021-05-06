@@ -17,7 +17,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
     public MasterBag(int numberOfWorkers) throws RemoteException {
        super();
-       this.continuations = new DependencyGraph(taskBag);
+       this.continuations = new DependencyGraph(this);
        initWorkers(numberOfWorkers);
        api = this;
     }
@@ -28,12 +28,16 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     }
 
     public synchronized Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
+        /*
         SystemTask sysTask = new SystemTask() {
             @Override
             public Object call() throws Exception {
                 return inputFunction.exec(parameter1);
             }
         };
+
+         */
+        SystemTask sysTask = new SystemTask(inputFunction);
         sysTask.setType(TaskType.CONTINUE);
         sysTask.setPredecessor_1_ID(predecessor.getID());
 
@@ -47,13 +51,13 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
             sysTask.setParameter(predecessor.getID(),predecessor.getResult());
             addTask(sysTask);
         }else{
+            System.out.println("added to continuations");
             continuations.addContinuation(predecessor,sysTask);
         }
     }
 
 
     public Task getRemoteTask(){
-        System.out.println("GetRemoteTaskCalled");
         Task t =getTask();
         System.out.println(t);
         return t;
@@ -63,9 +67,10 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         try {
             remoteTasks.get(ID).setResult(result);
             synchronized (this) {
+                System.out.println("Releasing continuations..");
                 continuations.releaseContinuations(remoteTasks.get(ID));
             }
-        } catch (Exception e){}
+        } catch (Exception e){e.printStackTrace();}
     }
 
     public static void register() throws RemoteException, AlreadyBoundException {
@@ -97,6 +102,6 @@ class MasterWorker extends Worker {
         task.run();
         try {
             masterBag.returnFinishedTask(task.getResult(), task.getID());
-        }catch(Exception e){}
+        }catch(Exception e){e.printStackTrace();}
     }
 }

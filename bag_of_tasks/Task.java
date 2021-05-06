@@ -1,9 +1,10 @@
 package bag_of_tasks;
 
+import java.io.Serializable;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-public abstract class Task<T> implements Callable<T>, Runnable {
+public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
 
     UUID ID;
 
@@ -31,6 +32,7 @@ public abstract class Task<T> implements Callable<T>, Runnable {
             try {
                 wait();
             } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
