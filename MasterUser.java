@@ -15,16 +15,19 @@ class MasterUser {
         int primesToFind;
         setHost(args);
 
-        MasterBag masterBag = new MasterBag(0);
+        MasterBag masterBag = new MasterBag(1);
         MasterBag.register();
 
         Task t1 = new squareTask(2);
 
         Task t2 = masterBag.continueWith(t1,(result) -> 3+(int)result);
+        Task t3 = masterBag.combineWith(t2,t1,(a,b)->(int)a+(int)b);
+        //Task t4 = masterBag.combineWith(t3,t2,(a,b)->(int)a+(int)b);
         masterBag.submitTask(t1);
 
         futures.add(t1);
         futures.add(t2);
+        futures.add(t3);
 
         /*
         System.out.println("This program will calculate the n first prime numbers.");
@@ -52,7 +55,7 @@ class MasterUser {
 
         for(Task t : futures){
             try {
-                System.out.println("The result of task with ID "+t.getID()+" is:"+t.getResult());
+                System.out.println("The result of task "+t+" is:"+t.getResult());
             } catch (Exception e){e.printStackTrace();;}
         }
 

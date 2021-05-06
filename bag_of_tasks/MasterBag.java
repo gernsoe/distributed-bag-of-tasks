@@ -46,7 +46,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         return sysTask;
     }
 
-    protected synchronized Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
+    public synchronized Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
         SystemTask sysTask = new CombineTask(inputFunction,predecessor1.getID(),predecessor2.getID());
         //sysTask.setType(TaskType.COMBINE);
         //sysTask.setPredecessor_1_ID(predecessor1.getID());
