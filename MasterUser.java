@@ -15,7 +15,7 @@ class MasterUser {
         int primesToFind;
         setHost(args);
 
-        MasterBag masterBag = new MasterBag(1);
+        MasterBag masterBag = new MasterBag(0);
         MasterBag.register();
 
         Task t1 = new squareTask(2);

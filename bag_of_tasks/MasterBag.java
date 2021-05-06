@@ -38,10 +38,21 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
          */
 
-        SystemTask sysTask = new ContinueTask(inputFunction);
-        sysTask.setPredecessor_1_ID(predecessor.getID());
+        SystemTask sysTask = new ContinueTask(inputFunction,predecessor.getID());
+        //sysTask.setPredecessor_1_ID(predecessor.getID());
 
         submitIfReady(sysTask, predecessor);
+
+        return sysTask;
+    }
+
+    protected synchronized Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
+        SystemTask sysTask = new CombineTask(inputFunction,predecessor1.getID(),predecessor2.getID());
+        //sysTask.setType(TaskType.COMBINE);
+        //sysTask.setPredecessor_1_ID(predecessor1.getID());
+        //sysTask.setPredecessor_2_ID(predecessor2.getID());
+
+        submitIfReady(sysTask, predecessor1, predecessor2);
 
         return sysTask;
     }
@@ -53,6 +64,23 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }else{
             System.out.println("added to continuations");
             continuations.addContinuation(predecessor,sysTask);
+        }
+    }
+
+    public synchronized void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
+        if(predecessor1.getIsDone() && predecessor2.getIsDone()){
+            sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
+            sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
+            addTask(sysTask);
+        }else if(predecessor1.getIsDone()){
+            sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
+            continuations.addContinuation(predecessor2,sysTask);
+        }else if(predecessor2.getIsDone()){
+            sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
+            continuations.addContinuation(predecessor1,sysTask);
+        }else{
+            continuations.addContinuation(predecessor1,sysTask);
+            continuations.addContinuation(predecessor2,sysTask);
         }
     }
 
