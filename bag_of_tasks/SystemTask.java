@@ -1,7 +1,7 @@
 package bag_of_tasks;
 import java.util.UUID;
 
-public class SystemTask<A,T> extends Task<T>{
+public abstract class SystemTask<A,T> extends Task<T>{
 
     UUID predecessor_1_ID;
     UUID predecessor_2_ID;
@@ -11,15 +11,6 @@ public class SystemTask<A,T> extends Task<T>{
 
     TaskType type;
     boolean isReady = false;
-    ContinueInput inputfunction;
-
-    public SystemTask(ContinueInput inputfunction){
-        this.inputfunction=inputfunction;
-    }
-
-    public T call() throws Exception {
-        return (T) inputfunction.exec(parameter1);
-    }
 
     public void setParameter(UUID predecessorID, A parameter) throws Exception {
         if(predecessorID == predecessor_1_ID){

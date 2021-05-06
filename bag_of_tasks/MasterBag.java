@@ -37,8 +37,8 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         };
 
          */
-        SystemTask sysTask = new SystemTask(inputFunction);
-        sysTask.setType(TaskType.CONTINUE);
+
+        SystemTask sysTask = new ContinueTask(inputFunction);
         sysTask.setPredecessor_1_ID(predecessor.getID());
 
         submitIfReady(sysTask, predecessor);
