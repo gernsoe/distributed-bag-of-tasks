@@ -5,22 +5,29 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
-    protected ConcurrentHashMap<UUID, Task> remoteTasks = new ConcurrentHashMap<UUID, Task>(); //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
+    protected HashMap<UUID, Task> remoteTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
     protected DependencyGraph continuations;
     private static MasterAPI api;
+    private int numberOfWorkers;
+    protected int taskCount=0;
 
     public MasterBag(int numberOfWorkers) throws RemoteException {
        super();
+       this.numberOfWorkers = numberOfWorkers;
+       this.remoteTasks = new HashMap<UUID, Task>();
        this.continuations = new DependencyGraph(this);
+       System.out.println("MasterBag initialized with: "+numberOfWorkers+" workers");
        initWorkers(numberOfWorkers);
        api = this;
     }
 
-    public void submitTask(Task t) {
+    public synchronized void submitTask(Task t) {
         addTask(t);
         remoteTasks.put(t.getID(),t);
     }
@@ -77,8 +84,11 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
                 remoteTasks.get(ID).setResult(result);
                 //System.out.println("Releasing continuations..");
                 continuations.releaseContinuations(remoteTasks.get(ID));
+                taskCount++;
             }
-        } catch (Exception e){e.printStackTrace();}
+        } catch (Exception e){
+            System.out.println("Failed with ID: "+ID);
+            e.printStackTrace();}
     }
 
     public static void register() throws RemoteException, AlreadyBoundException {
@@ -95,20 +105,31 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
             workers.add(worker);
         }
     }
+
+    public void flush(){
+        this.taskBag = new ExtendedQueue<Task>(){};
+        this.remoteTasks = new HashMap<UUID, Task>();
+        this.continuations = new DependencyGraph(this);
+        this.workers = new ArrayList<Worker>(){};
+        initWorkers(numberOfWorkers);
+        System.out.println("MasterBag flushed");
+    }
 }
 
 class MasterWorker extends Worker {
     MasterBag masterBag;
+
     public MasterWorker(MasterBag masterBag){
         this.masterBag = masterBag;
     }
-
-    public void work() throws RemoteException {
-        Task task = masterBag.getTask();
-        //System.out.println("MasterWorker started on task "+task);
-        task.run();
-        try {
-            masterBag.returnFinishedTask(task.getResult(), task.getID());
-        }catch(Exception e){e.printStackTrace();}
+    public void work() {
+            Task task = masterBag.getTask();
+            task.run();
+            try {
+                masterBag.returnFinishedTask(task.getResult(), task.getID());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
-}
+

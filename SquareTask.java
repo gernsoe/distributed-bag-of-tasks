@@ -8,7 +8,6 @@ class squareTask extends Task {
     }
 
     public Integer call() throws InterruptedException{
-        Thread.sleep(1);
         return numberToSquare*numberToSquare;
     }
 }
