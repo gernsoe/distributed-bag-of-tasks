@@ -9,13 +9,14 @@ public class NodeBag extends BagOfTasks {
 
     public NodeBag(int numberOfWorkers, String hostname) {
         super();
+        taskBag.setThreshold(1);
         int port = 1099;
         try {
             Registry registry = LocateRegistry.getRegistry(hostname,port);
             this.stub = (MasterAPI) registry.lookup("BoT");
             System.out.println("Stub received from: "+hostname);
         } catch (Exception e ) {
-            System.out.println("Nodebag failed with: " + e);
+            e.printStackTrace();
         }
         initWorkers(numberOfWorkers);
         TaskRetriever taskRetriever = new TaskRetriever(this);
@@ -30,19 +31,17 @@ public class NodeBag extends BagOfTasks {
         }
     }
 
-    public void takeTaskFromMaster(int tasksToRetrieve) throws RemoteException {
-        for (int i = 0; i < tasksToRetrieve; i++) {
+    public void takeTaskFromMaster() throws RemoteException {
+
             Task task = stub.getRemoteTask();
+
             addTask(task);
-        }
     }
 }
 
 class TaskRetriever extends Thread {
 
     NodeBag nodeBag;
-    int taskThreshold = 2;
-    int tasksToRetrieve = 4;
 
     protected TaskRetriever(NodeBag nodeBag) {
         this.nodeBag = nodeBag;
@@ -51,12 +50,10 @@ class TaskRetriever extends Thread {
     public void run() {
         while (true) {
             try {
-                if (nodeBag.taskBag.size() <= taskThreshold) {
-                    nodeBag.takeTaskFromMaster(tasksToRetrieve);
-                    System.out.println("Retrieved tasks");
-                }
-                Thread.sleep(3000);
-            } catch (InterruptedException | RemoteException e) {}
+                nodeBag.takeTaskFromMaster();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
@@ -68,11 +65,13 @@ class NodeWorker extends Worker {
     }
 
     public void work() {
+
         Task task = nodeBag.getTask();
+
         task.run();
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
-        }catch(Exception e){}
+        }catch(Exception e){e.printStackTrace();}
         System.out.println("Finished task");
     }
 }

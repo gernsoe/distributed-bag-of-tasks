@@ -10,51 +10,32 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 class MasterUser {
 
-    public static void main(String[] args) throws RemoteException, AlreadyBoundException, InterruptedException {
+    public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         ArrayList<Task> futures = new ArrayList<Task>();
         int primesToFind;
         setHost(args);
 
-        MasterBag masterBag = new MasterBag(1);
+        MasterBag masterBag = new MasterBag(8);
         MasterBag.register();
 
-        System.out.println("This program will calculate the n first prime numbers.");
-        System.out.println("Input how many prime numbers do you want to compute:");
+        //Task t4 = masterBag.combineWith(t3,t2,(a,b)->(int)a+(int)b);
 
-        while(true) {
-            Scanner in = new Scanner(System.in);
-            String input = in.next();
-
-            if (isInt(input)){
-                primesToFind = Integer.parseInt(input);
-                System.out.println("Finding first " + primesToFind + " prime numbers...");
-
-                for (int i = 1; i <= primesToFind; ++i) {
-                    Task task = new PrimeTask(i);
-                    masterBag.submitTask(task);
-                    futures.add(task);
-                    System.out.println("Added task " + i + " to the bag");
-                }
-                break;
-            }
+        for(int i = 0; i<10000; i++){
+            Task t = new squareTask(i);
+            masterBag.submitTask(t);
+            Task t2 = masterBag.continueWith(t,a->(int)a/2);
+            Task t3 = masterBag.combineWith(t,t2,(a,b)->(int)a-(int)b);
+            futures.add(t);
+            futures.add(t2);
+            futures.add(t3);
         }
 
         for(Task t : futures){
             try {
-                System.out.println("The result of task with ID "+t.getID()+" is:"+t.getResult());
-            } catch (Exception e){}
+                System.out.println("The result of task "+t+" is:"+t.getResult());
+            } catch (Exception e){e.printStackTrace();;}
         }
 
-    }
-
-    public static boolean isInt(String input) {
-        try {
-            Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            System.out.println("Please input a valid positive integer.");
-            return false;
-        }
-        return true;
     }
 
     public static void setHost(String[] ipv4){

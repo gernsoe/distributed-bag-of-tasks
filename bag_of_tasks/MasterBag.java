@@ -5,53 +5,87 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
-    protected ConcurrentHashMap<Integer, Task> remoteTasks = new ConcurrentHashMap<Integer, Task>();
-    protected LinkedBlockingQueue<Task> finishedTasks = new LinkedBlockingQueue<Task>();
-    int counter = 0;
-
+    protected ConcurrentHashMap<UUID, Task> remoteTasks = new ConcurrentHashMap<UUID, Task>(); //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
+    protected DependencyGraph continuations;
     private static MasterAPI api;
 
     public MasterBag(int numberOfWorkers) throws RemoteException {
        super();
+       this.continuations = new DependencyGraph(this);
        initWorkers(numberOfWorkers);
        api = this;
     }
 
     public void submitTask(Task t) {
-        t.setID(counter);
         addTask(t);
-        remoteTasks.put(counter,t);
-        counter++;
+        remoteTasks.put(t.getID(),t);
     }
+
+    public synchronized Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
+        SystemTask sysTask = new ContinueTask(inputFunction,predecessor.getID());
+        submitIfReady(sysTask, predecessor);
+        return sysTask;
+    }
+
+    public synchronized Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
+        SystemTask sysTask = new CombineTask(inputFunction,predecessor1.getID(),predecessor2.getID());
+        submitIfReady(sysTask, predecessor1, predecessor2);
+        return sysTask;
+    }
+
+    protected synchronized void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
+        if(predecessor.getIsDone()){
+            sysTask.setParameter(predecessor.getID(),predecessor.getResult());
+            submitTask(sysTask);
+        }else{
+            //System.out.println("added to continuations");
+            continuations.addContinuation(predecessor,sysTask);
+        }
+    }
+
+    public synchronized void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
+        if(predecessor1.getIsDone() && predecessor2.getIsDone()){
+            sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
+            sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
+            submitTask(sysTask);
+        }else if(predecessor1.getIsDone()){
+            sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
+            continuations.addContinuation(predecessor2,sysTask);
+        }else if(predecessor2.getIsDone()){
+            sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
+            continuations.addContinuation(predecessor1,sysTask);
+        }else{
+            continuations.addContinuation(predecessor1,sysTask);
+            continuations.addContinuation(predecessor2,sysTask);
+        }
+    }
+
 
     public Task getRemoteTask(){
-        return getTask();
+        Task t =getTask();
+        System.out.println(t);
+        return t;
     }
 
-    public Task getFinishedTask() throws InterruptedException{
-        return finishedTasks.take();
-    }
-
-    public <T> void returnFinishedTask(T result, int ID){
-        //finishedTasks.add(task);
+    public <T> void returnFinishedTask(T result, UUID ID){
         try {
-            //System.out.println("før");
-            remoteTasks.get(ID).setResult(result);
-            //System.out.println("efter");
-        } catch (Exception e){}
+            synchronized (this) {
+                remoteTasks.get(ID).setResult(result);
+                //System.out.println("Releasing continuations..");
+                continuations.releaseContinuations(remoteTasks.get(ID));
+            }
+        } catch (Exception e){e.printStackTrace();}
     }
 
-    public static void register() throws RemoteException, InterruptedException , AlreadyBoundException {
-        MasterAPI stub = (MasterAPI) UnicastRemoteObject.exportObject(api,1100);
+    public static void register() throws RemoteException, AlreadyBoundException {
+        MasterAPI stub = (MasterAPI) UnicastRemoteObject.exportObject(api,1099);
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.bind("BoT",stub);
-
-        System.out.print("Master Bag registered");
+        System.out.println("Master Bag registered");
     }
 
     public void initWorkers(int numberOfWorkers){
@@ -61,7 +95,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
             workers.add(worker);
         }
     }
-
 }
 
 class MasterWorker extends Worker {
@@ -72,10 +105,10 @@ class MasterWorker extends Worker {
 
     public void work() throws RemoteException {
         Task task = masterBag.getTask();
-        System.out.println("MasterWorker started on task");
+        //System.out.println("MasterWorker started on task "+task);
         task.run();
         try {
             masterBag.returnFinishedTask(task.getResult(), task.getID());
-        }catch(Exception e){}
+        }catch(Exception e){e.printStackTrace();}
     }
 }
