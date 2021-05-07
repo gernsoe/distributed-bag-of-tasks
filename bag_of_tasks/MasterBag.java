@@ -10,8 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
     protected ConcurrentHashMap<UUID, Task> remoteTasks = new ConcurrentHashMap<UUID, Task>(); //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
-
-
     protected DependencyGraph continuations;
     private static MasterAPI api;
 
@@ -28,41 +26,23 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     }
 
     public synchronized Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
-        /*
-        SystemTask sysTask = new SystemTask() {
-            @Override
-            public Object call() throws Exception {
-                return inputFunction.exec(parameter1);
-            }
-        };
-
-         */
-
         SystemTask sysTask = new ContinueTask(inputFunction,predecessor.getID());
-        //sysTask.setPredecessor_1_ID(predecessor.getID());
-
         submitIfReady(sysTask, predecessor);
-
         return sysTask;
     }
 
     public synchronized Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
         SystemTask sysTask = new CombineTask(inputFunction,predecessor1.getID(),predecessor2.getID());
-        //sysTask.setType(TaskType.COMBINE);
-        //sysTask.setPredecessor_1_ID(predecessor1.getID());
-        //sysTask.setPredecessor_2_ID(predecessor2.getID());
-
         submitIfReady(sysTask, predecessor1, predecessor2);
-
         return sysTask;
     }
 
     protected synchronized void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
         if(predecessor.getIsDone()){
             sysTask.setParameter(predecessor.getID(),predecessor.getResult());
-            addTask(sysTask);
+            submitTask(sysTask);
         }else{
-            System.out.println("added to continuations");
+            //System.out.println("added to continuations");
             continuations.addContinuation(predecessor,sysTask);
         }
     }
@@ -71,7 +51,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         if(predecessor1.getIsDone() && predecessor2.getIsDone()){
             sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
             sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
-            addTask(sysTask);
+            submitTask(sysTask);
         }else if(predecessor1.getIsDone()){
             sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
             continuations.addContinuation(predecessor2,sysTask);
@@ -93,9 +73,9 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
     public <T> void returnFinishedTask(T result, UUID ID){
         try {
-            remoteTasks.get(ID).setResult(result);
             synchronized (this) {
-                System.out.println("Releasing continuations..");
+                remoteTasks.get(ID).setResult(result);
+                //System.out.println("Releasing continuations..");
                 continuations.releaseContinuations(remoteTasks.get(ID));
             }
         } catch (Exception e){e.printStackTrace();}
@@ -105,7 +85,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         MasterAPI stub = (MasterAPI) UnicastRemoteObject.exportObject(api,1099);
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.bind("BoT",stub);
-        System.out.print("Master Bag registered");
+        System.out.println("Master Bag registered");
     }
 
     public void initWorkers(int numberOfWorkers){
@@ -115,7 +95,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
             workers.add(worker);
         }
     }
-
 }
 
 class MasterWorker extends Worker {
@@ -126,7 +105,7 @@ class MasterWorker extends Worker {
 
     public void work() throws RemoteException {
         Task task = masterBag.getTask();
-        System.out.println("MasterWorker started on task");
+        //System.out.println("MasterWorker started on task "+task);
         task.run();
         try {
             masterBag.returnFinishedTask(task.getResult(), task.getID());
