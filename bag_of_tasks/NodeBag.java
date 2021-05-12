@@ -43,7 +43,7 @@ public class NodeBag extends BagOfTasks {
 
     public void notifyMaster() throws RemoteException, UnknownHostException {
         InetAddress localhost = InetAddress.getLocalHost();
-        stub.ack((localhost.getHostAddress()).trim());
+        stub.identify((localhost.getHostName()).trim());
     }
 }
 
