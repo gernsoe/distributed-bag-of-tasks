@@ -16,11 +16,21 @@ class MasterUser {
         MasterBag masterBag = new MasterBag(5);
         MasterBag.register();
 
-        int runs = 10;
+        int runs = 5;
+        int warmups = 3;
+        int tasksToRun = 20;
+
+        System.out.println("Warming up "+warmups+" times");
+        for(int i = 0; i<warmups; i++){
+            runStuff(masterBag,tasksToRun);
+
+        }
+
+        System.out.println("Warmup up, now running "+tasksToRun+" tasks");
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuff(masterBag,30);
+            runStuff(masterBag,tasksToRun);
         }
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");

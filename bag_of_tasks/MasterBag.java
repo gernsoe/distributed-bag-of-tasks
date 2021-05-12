@@ -77,7 +77,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID){
         try {
-            remoteTasks.remove(ID).setResult(result);
+            remoteTasks.get(ID).setResult(result);
             //System.out.println("Releasing continuations..");
             continuations.releaseContinuations(remoteTasks.get(ID));
             //taskCount++;
