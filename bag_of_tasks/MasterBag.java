@@ -71,19 +71,16 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }
     }
 
-
     public Task getRemoteTask(){
         return getTask();
     }
 
-    public <T> void returnFinishedTask(T result, UUID ID){
+    public synchronized <T> void returnFinishedTask(T result, UUID ID){
         try {
-            synchronized (this) {
-                remoteTasks.get(ID).setResult(result);
-                //System.out.println("Releasing continuations..");
-                continuations.releaseContinuations(remoteTasks.get(ID));
-                taskCount++;
-            }
+            remoteTasks.get(ID).setResult(result);
+            //System.out.println("Releasing continuations..");
+            continuations.releaseContinuations(remoteTasks.get(ID));
+            //taskCount++;
         } catch (Exception e){
             System.out.println("Failed with ID: "+ID);
             e.printStackTrace();}
@@ -104,14 +101,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }
     }
 
-    public void flush(){
-        this.taskBag = new ExtendedQueue<Task>(){};
-        this.remoteTasks = new HashMap<UUID, Task>();
-        this.continuations = new DependencyGraph(this);
-        this.workers = new ArrayList<Worker>(){};
-        initWorkers(numberOfWorkers);
-        System.out.println("MasterBag flushed");
-    }
 }
 
 class MasterWorker extends Worker {
