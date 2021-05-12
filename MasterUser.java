@@ -16,11 +16,11 @@ class MasterUser {
         MasterBag masterBag = new MasterBag(5);
         MasterBag.register();
 
-        int runs = 5;
+        int runs = 1;
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuff(masterBag);
+            runStuff(masterBag,5000000);
         }
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
@@ -42,11 +42,11 @@ class MasterUser {
         System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
     }
 
-    public static void runStuff(MasterBag masterBag) throws Exception{
+    public static void runStuff(MasterBag masterBag,int numOfTasks) throws Exception{
         ArrayList<Task> futures = new ArrayList<Task>();
         long startTime;
         startTime = System.nanoTime();
-        for(int i = 0; i<1000000; i++){
+        for(int i = 0; i<numOfTasks; i++){
             Task t = new squareTask(i);
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->(int)a/2);
@@ -64,6 +64,6 @@ class MasterUser {
          */
         System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
         System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
-        masterBag.flush();
+        //masterBag.flush();
     }
 }
