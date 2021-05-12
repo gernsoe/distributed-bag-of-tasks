@@ -26,7 +26,7 @@ class MasterUser {
 
         }
 
-        System.out.println("Warmup up, now running "+tasksToRun+" tasks");
+        System.out.println("Warmup up, now running "+runs+" runs");
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){

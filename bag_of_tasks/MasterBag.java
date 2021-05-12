@@ -27,6 +27,10 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
        api = this;
     }
 
+    public void ack(String ipv4){
+        System.out.println("Node connected from IP: "+ipv4);
+    }
+
     public synchronized void submitTask(Task t) {
         addTask(t);
         remoteTasks.put(t.getID(),t);
