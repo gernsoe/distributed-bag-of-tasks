@@ -37,6 +37,10 @@ public class NodeBag extends BagOfTasks {
 
             addTask(task);
     }
+
+    public void notifyMaster() throws RemoteException {
+        stub.ack(System.getProperty("java.rmi.server.hostname"));
+    }
 }
 
 class TaskRetriever extends Thread {
