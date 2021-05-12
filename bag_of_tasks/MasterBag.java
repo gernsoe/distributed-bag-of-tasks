@@ -73,9 +73,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
 
     public Task getRemoteTask(){
-        Task t =getTask();
-        System.out.println(t);
-        return t;
+        return getTask();
     }
 
     public <T> void returnFinishedTask(T result, UUID ID){

@@ -72,7 +72,7 @@ class NodeWorker extends Worker {
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
         }catch(Exception e){e.printStackTrace();}
-        System.out.println("Finished task");
+        //System.out.println("Finished task");
     }
 }
 
