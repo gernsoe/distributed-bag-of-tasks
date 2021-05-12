@@ -27,8 +27,8 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
        api = this;
     }
 
-    public void ack(String ipv4){
-        System.out.println("Node connected from IP: "+ipv4);
+    public void identify(String nodeName){
+        System.out.println("Node connected from: "+nodeName);
     }
 
     public synchronized void submitTask(Task t) {
