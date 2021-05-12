@@ -6,5 +6,6 @@ public interface MasterAPI extends Remote{
 
     public Task getRemoteTask() throws RemoteException;
     public <T> void returnFinishedTask(T result, UUID ID) throws RemoteException;
+    public void ack(String ipv4) throws RemoteException;
 
 }  
