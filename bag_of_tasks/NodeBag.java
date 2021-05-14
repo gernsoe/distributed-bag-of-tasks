@@ -8,10 +8,12 @@ import java.rmi.registry.Registry;
 
 public class NodeBag extends BagOfTasks {
     MasterAPI stub;
+    private int numberOfWorkers;
 
     public NodeBag(int numberOfWorkers, String hostname) {
         super();
         taskBag.setThreshold(1);
+        this.numberOfWorkers = numberOfWorkers;
         int port = 1099;
         try {
             Registry registry = LocateRegistry.getRegistry(hostname,port);
@@ -43,7 +45,7 @@ public class NodeBag extends BagOfTasks {
 
     public void notifyMaster() throws RemoteException, UnknownHostException {
         InetAddress localhost = InetAddress.getLocalHost();
-        stub.identify((localhost.getHostName()).trim());
+        stub.identify((localhost.getHostName()).trim(), numberOfWorkers);
     }
 }
 
