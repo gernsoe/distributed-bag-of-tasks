@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
 import java.util.concurrent.LinkedBlockingQueue;
 
 class MasterUser {
@@ -15,10 +16,12 @@ class MasterUser {
 
         MasterBag masterBag = new MasterBag(5);
         MasterBag.register();
+        Timer timer = new Timer();
+        timer.schedule(new MasterMonitor(masterBag),0,2000);
 
         int runs = 5;
         int warmups = 3;
-        int tasksToRun = 20;
+        int tasksToRun = 50;
 
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
@@ -26,7 +29,7 @@ class MasterUser {
 
         }
 
-        System.out.println("Warmup up, now running "+runs+" runs");
+        System.out.println("Warmed up, now running "+runs+" runs");
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
@@ -34,6 +37,7 @@ class MasterUser {
         }
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
+        timer.cancel();
 
     }
 
@@ -60,10 +64,12 @@ class MasterUser {
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->(int)a/2);
-            Task t3 = masterBag.combineWith(t,t2,(a,b)->(int)a-(int)b);
+            Task t3 = masterBag.continueWith(t,a->(int)a/2);
+            Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a-(int)b);
             futures.add(t);
             futures.add(t2);
             futures.add(t3);
+            futures.add(t4);
         }
         /*
         for(Task t : futures){
@@ -72,8 +78,10 @@ class MasterUser {
             } catch (Exception e){e.printStackTrace();;}
         }
          */
+
         System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
         System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
-        //masterBag.flush();
+        masterBag.resetTaskCount();
+
     }
 }
