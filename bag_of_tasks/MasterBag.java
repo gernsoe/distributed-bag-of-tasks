@@ -16,6 +16,8 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     private static MasterAPI api;
     private int numberOfWorkers;
     protected int taskCount=0;
+    private int numberOfNodes = 0;
+    private int totalNumberOfWorkers = 0;
 
     public MasterBag(int numberOfWorkers) throws RemoteException {
        super();
@@ -27,8 +29,10 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
        api = this;
     }
 
-    public void identify(String nodeName){
+    public void identify(String nodeName, int numberOfNodeWorkers){
         System.out.println("Node connected from: "+nodeName);
+        numberOfNodes++;
+        totalNumberOfWorkers += numberOfNodeWorkers;
     }
 
     public synchronized void submitTask(Task t) {
@@ -75,9 +79,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }
     }
 
-    public Task getRemoteTask(){
-        return getTask();
-    }
+    public Task getRemoteTask(){ return getTask(); }
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID){
         try {
@@ -104,6 +106,14 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
             worker.start();
             workers.add(worker);
         }
+    }
+
+    public int getNumberOfNodes() {
+        return numberOfNodes;
+    }
+
+    public int getTotalWorkers() {
+        return totalNumberOfWorkers;
     }
 
     public int getTaskCount(){

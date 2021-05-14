@@ -11,13 +11,22 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 class MasterUser {
 
+    public static String logFileName;
+
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        MasterBag masterBag = new MasterBag(5);
+        int numberOfWorkers = 5;
+        MasterBag masterBag = new MasterBag(numberOfWorkers);
         MasterBag.register();
         Timer timer = new Timer();
         timer.schedule(new MasterMonitor(masterBag),0,2000);
+
+        logFileName = LogRunTime.createFile();
+
+        LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
+        LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
+        LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());
 
         int runs = 5;
         int warmups = 3;
@@ -25,17 +34,20 @@ class MasterUser {
 
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
-            runStuff(masterBag,tasksToRun);
-
+            runStuff(masterBag,tasksToRun,false);
         }
 
         System.out.println("Warmed up, now running "+runs+" runs");
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuff(masterBag,tasksToRun);
+            runStuff(masterBag,tasksToRun,true);
+
         }
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
+        String averageOutput = "Average execution time across "+runs+" runs: "+time+"s";
+        System.out.println(averageOutput);
+        LogRunTime.writeFile(logFileName, averageOutput);
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
         timer.cancel();
 
@@ -45,6 +57,8 @@ class MasterUser {
         try {
             if (ipv4[0].equals("marc")) {
                 System.setProperty("java.rmi.server.hostname", "80.162.217.75");
+            } else if (ipv4[0].equals("christian")) {
+                System.setProperty("java.rmi.server.hostname", "62.198.63.48");
             } else {
                 System.setProperty("java.rmi.server.hostname", ipv4[0]);
             }
@@ -56,7 +70,7 @@ class MasterUser {
         System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
     }
 
-    public static void runStuff(MasterBag masterBag,int numOfTasks) throws Exception{
+    public static void runStuff(MasterBag masterBag,int numOfTasks, boolean writeToFile) throws Exception{
         ArrayList<Task> futures = new ArrayList<Task>();
         long startTime;
         startTime = System.nanoTime();
@@ -83,5 +97,11 @@ class MasterUser {
         System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
         masterBag.resetTaskCount();
 
+        String outputString = "Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s";
+        System.out.println(outputString);
+        if (writeToFile) {
+            LogRunTime.writeFile(logFileName, outputString);
+        }
+        //masterBag.flush();
     }
 }

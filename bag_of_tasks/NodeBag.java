@@ -1,20 +1,25 @@
 package bag_of_tasks;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class NodeBag extends BagOfTasks {
     MasterAPI stub;
+    private int numberOfWorkers;
 
     public NodeBag(int numberOfWorkers, String hostname) {
         super();
         taskBag.setThreshold(1);
+        this.numberOfWorkers = numberOfWorkers;
         int port = 1099;
         try {
             Registry registry = LocateRegistry.getRegistry(hostname,port);
             this.stub = (MasterAPI) registry.lookup("BoT");
             System.out.println("Stub received from: "+hostname);
+            notifyMaster();
         } catch (Exception e ) {
             e.printStackTrace();
         }
@@ -36,6 +41,11 @@ public class NodeBag extends BagOfTasks {
             Task task = stub.getRemoteTask();
 
             addTask(task);
+    }
+
+    public void notifyMaster() throws RemoteException, UnknownHostException {
+        InetAddress localhost = InetAddress.getLocalHost();
+        stub.identify((localhost.getHostName()).trim(), numberOfWorkers);
     }
 }
 
@@ -72,7 +82,7 @@ class NodeWorker extends Worker {
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
         }catch(Exception e){e.printStackTrace();}
-        System.out.println("Finished task");
+        //System.out.println("Finished task");
     }
 }
 
