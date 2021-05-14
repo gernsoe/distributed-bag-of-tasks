@@ -35,6 +35,8 @@ class MasterUser {
 
         System.out.println("Warmed up, now running "+runs+" runs");
 
+        LogRunTime.writeFile(logFileName, "Running " + tasksToRun + " tasks");
+
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
             runStuff(masterBag,tasksToRun,true);
