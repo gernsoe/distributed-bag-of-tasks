@@ -16,11 +16,11 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 5;
+        int numberOfWorkers = 0;
         MasterBag masterBag = new MasterBag(numberOfWorkers);
         MasterBag.register();
         Timer timer = new Timer();
-        timer.schedule(new MasterMonitor(masterBag),0,2000);
+        //timer.schedule(new MasterMonitor(masterBag),0,2000);
 
         logFileName = LogRunTime.createFile();
 
@@ -95,7 +95,7 @@ class MasterUser {
          */
 
         System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
-        System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
+        //System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
         masterBag.resetTaskCount();
 
         String outputString = "Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s";
