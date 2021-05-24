@@ -21,6 +21,7 @@ public class NodeBag extends BagOfTasks {
             System.out.println("Stub received from: "+hostname);
             notifyMaster();
         } catch (Exception e ) {
+            System.out.println("Failed to connect");
             e.printStackTrace();
         }
         initWorkers(numberOfWorkers);
