@@ -5,13 +5,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
     protected HashMap<UUID, Task> remoteTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
+    protected HashMap<UUID, Set<UUID>> nodeTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
     protected DependencyGraph continuations;
     private static MasterAPI api;
     private int numberOfWorkers;
@@ -29,8 +27,9 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
        api = this;
     }
 
-    public void identify(String nodeName, int numberOfNodeWorkers){
-        System.out.println("Node connected from: "+nodeName);
+    public void identify(UUID nodeID, int numberOfNodeWorkers){
+        System.out.println("Node connected with ID: "+nodeID);
+        nodeTasks.put(nodeID,new HashSet<UUID>());
         numberOfNodes++;
         totalNumberOfWorkers += numberOfNodeWorkers;
     }
@@ -79,15 +78,24 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }
     }
 
-    public Task getRemoteTask(){ return getTask(); }
+    public Task getRemoteTask(UUID nodeID){
+        Task t = getTask();
+        synchronized (this){
+            nodeTasks.get(nodeID).add(t.getID());
+        }
+        return t;
+    }
 
-    public synchronized <T> void returnFinishedTask(T result, UUID ID){
+    public synchronized <T> void returnFinishedTask(T result, UUID ID, UUID nodeID){
         try {
             Task t = remoteTasks.remove(ID);
             t.setResult(result);
             //System.out.println("Releasing continuations..");
             continuations.releaseContinuations(t);
             taskCount++;
+            if(nodeID != this.bagID){ //Since tasks are only added to nodeTasks through getRemoteTask call, the MasterBag ID is not present in nodeTasks
+                nodeTasks.get(nodeID).remove(ID);
+            }
         } catch (Exception e){
             System.out.println("Failed with ID: "+ID);
             e.printStackTrace();}
@@ -135,7 +143,7 @@ class MasterWorker extends Worker {
             Task task = masterBag.getTask();
             task.run();
             try {
-                masterBag.returnFinishedTask(task.getResult(), task.getID());
+                masterBag.returnFinishedTask(task.getResult(), task.getID(), masterBag.getBagID());
             } catch (Exception e) {
                 e.printStackTrace();
             }

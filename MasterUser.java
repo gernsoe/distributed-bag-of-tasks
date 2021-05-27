@@ -20,7 +20,7 @@ class MasterUser {
         MasterBag masterBag = new MasterBag(numberOfWorkers);
         MasterBag.register();
         Timer timer = new Timer();
-        //timer.schedule(new MasterMonitor(masterBag),0,2000);
+        timer.schedule(new MasterMonitor(masterBag),0,2000);
 
         logFileName = LogRunTime.createFile();
 
@@ -79,7 +79,7 @@ class MasterUser {
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->(int)a/2);
-            Task t3 = masterBag.continueWith(t,a->(int)a/2);
+            Task t3 = masterBag.continueWith(t,a->(int)a+2);
             Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a-(int)b);
             futures.add(t);
             futures.add(t2);

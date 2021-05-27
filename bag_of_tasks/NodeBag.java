@@ -37,9 +37,7 @@ public class NodeBag extends BagOfTasks {
     }
 
     public void takeTaskFromMaster() throws RemoteException {
-
-            Task task = stub.getRemoteTask();
-
+            Task task = stub.getRemoteTask(bagID);
             addTask(task);
     }
 
@@ -49,7 +47,7 @@ public class NodeBag extends BagOfTasks {
         stub.identify((localhost.getHostName()).trim(), numberOfWorkers);
 
          */
-        stub.identify("HPC",numberOfWorkers);
+        stub.identify(bagID,numberOfWorkers);
     }
 }
 
@@ -84,7 +82,7 @@ class NodeWorker extends Worker {
 
         task.run();
         try {
-            nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
+            nodeBag.stub.returnFinishedTask(task.getResult(), task.getID(), nodeBag.getBagID());
         }catch(Exception e){e.printStackTrace();}
         //System.out.println("Finished task");
     }

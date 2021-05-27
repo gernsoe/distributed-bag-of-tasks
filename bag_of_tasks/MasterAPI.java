@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public interface MasterAPI extends Remote{
 
-    public Task getRemoteTask() throws RemoteException;
-    public <T> void returnFinishedTask(T result, UUID ID) throws RemoteException;
-    public void identify(String ipv4, int numberOfNodeWorkers) throws RemoteException;
+    public Task getRemoteTask(UUID nodeID) throws RemoteException;
+    public <T> void returnFinishedTask(T result, UUID ID,UUID nodeID) throws RemoteException;
+    public void identify(UUID nodeID, int numberOfNodeWorkers) throws RemoteException;
 
 }  
