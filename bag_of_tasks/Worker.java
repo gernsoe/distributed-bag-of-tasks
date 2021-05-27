@@ -14,6 +14,6 @@ abstract class Worker extends Thread {
         }
     }
 
-    abstract public void work() throws RemoteException;
+    abstract public void work() throws Exception;
 
 }

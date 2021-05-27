@@ -76,7 +76,8 @@ class MasterUser {
         long startTime;
         startTime = System.nanoTime();
         for(int i = 0; i<numOfTasks; i++){
-            Task t = new PrimeTask(i);
+            PrimeTask t = new PrimeTask(i);
+            t.setForkTrue();
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->(int)a/2);
             Task t3 = masterBag.continueWith(t,a->(int)a/2);

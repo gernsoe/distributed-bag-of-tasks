@@ -1,6 +1,7 @@
 package bag_of_tasks;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -11,6 +12,7 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
     Boolean isDone = false;
     String errorMsg = null;
     protected T result;
+    boolean fork = false;
 
     protected Task(){
         ID = UUID.randomUUID();
@@ -68,4 +70,8 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
     public Boolean getIsDone() {
         return isDone;
     }
+
+    public void setForkTrue()  { this.fork = true; }
+
+    public boolean getFork() { return fork; }
 }

@@ -5,10 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
     protected HashMap<UUID, Task> remoteTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
@@ -79,7 +76,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }
     }
 
-    public Task getRemoteTask(){ return getTask(); }
+    public Task getRemoteTask(){ return this.getTask(); }
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID){
         try {
@@ -131,7 +128,7 @@ class MasterWorker extends Worker {
     public MasterWorker(MasterBag masterBag){
         this.masterBag = masterBag;
     }
-    public void work() {
+    public void work() throws Exception {
             Task task = masterBag.getTask();
             task.run();
             try {

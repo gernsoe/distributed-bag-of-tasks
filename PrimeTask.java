@@ -1,5 +1,8 @@
 import bag_of_tasks.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PrimeTask extends Task {
     int numberToFind;
 
@@ -28,6 +31,16 @@ public class PrimeTask extends Task {
         } else {
             return (n*fact(n-1));
         }
+    }
+
+    public List<Task> subTasks() {
+        List<Task> subTasks = new ArrayList<>();
+
+        for (int i = 1; i <= 2; ++i) {
+            PrimeTask task = new PrimeTask(numberToFind*i);
+            subTasks.add(task);
+        }
+        return subTasks;
     }
 
     public int getInput() {
