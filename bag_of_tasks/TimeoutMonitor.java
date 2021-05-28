@@ -1,7 +1,5 @@
 package bag_of_tasks;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.HashMap;
 import java.util.TimerTask;
 import java.util.UUID;
