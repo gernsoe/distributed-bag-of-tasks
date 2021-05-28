@@ -16,15 +16,15 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 0;
+        int numberOfWorkers = 5;
         MasterBag masterBag = new MasterBag(numberOfWorkers,10000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile();
 
-        int runs = 5;
-        int warmups = 3;
-        int tasksToRun = 50;
+        int runs = 1;
+        int warmups = 0;
+        int tasksToRun = 40;
 
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
@@ -76,9 +76,9 @@ class MasterUser {
         for(int i = 0; i<numOfTasks; i++){
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
-            Task t2 = masterBag.continueWith(t,a->(int)a/2);
+            Task t2 = masterBag.continueWith(t,a->(int)a+2);
             Task t3 = masterBag.continueWith(t,a->(int)a+2);
-            Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a-(int)b);
+            Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a+(int)b);
             futures.add(t);
             futures.add(t2);
             futures.add(t3);

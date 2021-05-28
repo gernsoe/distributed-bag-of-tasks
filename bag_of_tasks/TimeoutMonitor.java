@@ -1,5 +1,4 @@
 package bag_of_tasks;
-
 import java.util.HashMap;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -17,7 +16,7 @@ public class TimeoutMonitor extends TimerTask {
             if(b){
                 timeouts.put(nodeID,false);
             } else {
-                System.out.println(nodeID+" Timed Out");
+                masterBag.restoreLostTasks(nodeID);
             }
         });
     }

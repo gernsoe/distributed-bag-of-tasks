@@ -10,9 +10,6 @@ public abstract class BagOfTasks {
 
     protected ExtendedQueue<Task> taskBag;
     protected List<Worker> workers;
-
-
-
     protected UUID bagID;
 
     protected BagOfTasks(){
