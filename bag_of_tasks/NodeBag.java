@@ -37,7 +37,7 @@ public class NodeBag extends BagOfTasks {
     }
 
     public void takeTaskFromMaster() throws RemoteException {
-            Task task = stub.getRemoteTask(bagID);
+            Task task = stub.getRemoteTask(this.getBagID());
             addTask(task);
     }
 
@@ -47,7 +47,7 @@ public class NodeBag extends BagOfTasks {
         stub.identify((localhost.getHostName()).trim(), numberOfWorkers);
 
          */
-        stub.identify(bagID,numberOfWorkers);
+        stub.identify(this.getBagID(),numberOfWorkers);
     }
 }
 
