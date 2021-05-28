@@ -19,7 +19,7 @@ public class PrimeTask extends Task {
                 }
             }
         }
-        return counter;
+        return numberToFind;
     }
 
     public int fact(int n) {

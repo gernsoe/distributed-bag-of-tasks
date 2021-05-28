@@ -34,10 +34,11 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
        this.timeoutTimer = new Timer();
        timeoutTimer.schedule(new TimeoutMonitor(this),0,timeout_ms);
        this.statusTimer = new Timer();
-       statusTimer.schedule(new StatusMonitor(this),0,status_ms);
+       statusTimer.schedule(new MasterMonitor(this),0,status_ms);
     }
 
     public synchronized void signal(UUID nodeID){
+        System.out.println("signal received");
         timeouts.put(nodeID,true);
     }
 

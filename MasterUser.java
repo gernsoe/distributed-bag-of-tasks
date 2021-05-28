@@ -12,7 +12,7 @@ class MasterUser {
         setHost(args);
 
         int numberOfWorkers = 5;
-        MasterBag masterBag = new MasterBag(numberOfWorkers,10000,2000);
+        MasterBag masterBag = new MasterBag(numberOfWorkers,30000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile();
@@ -87,12 +87,14 @@ class MasterUser {
             } catch (Exception e){e.printStackTrace();;}
         }
          */
-
-        System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
+        //System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
         //System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
-        masterBag.resetTaskCount();
+        for(Task t : futures) {
+            t.getResult();
+        }
 
-        String outputString = "Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s";
+        String outputString = "Time to process: "+masterBag.getTaskCount()+" tasks "+((double)System.nanoTime()-startTime)/1e9+"s";
+        masterBag.resetTaskCount();
         System.out.println(outputString);
         if (writeToFile) {
             LogRunTime.writeFile(logFileName, outputString);
