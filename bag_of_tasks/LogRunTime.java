@@ -1,3 +1,5 @@
+package bag_of_tasks;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +13,7 @@ public class LogRunTime {
             File newLog = new File(fileName);
             if (newLog.createNewFile()) {
                 System.out.println("New Log created: " + newLog.getName());
-                return date;
+                return fileName;
             }
         } catch (IOException e) {
             e.printStackTrace();
