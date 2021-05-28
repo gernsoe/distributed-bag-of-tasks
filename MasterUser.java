@@ -16,7 +16,6 @@ class MasterUser {
         MasterBag.register();
 
         logFileName = LogRunTime.createFile();
-        System.out.println(logFileName);
 
         int runs = 1;
         int warmups = 1;
