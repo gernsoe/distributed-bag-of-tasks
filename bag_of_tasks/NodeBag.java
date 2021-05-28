@@ -43,6 +43,7 @@ public class NodeBag extends BagOfTasks {
     public void takeTaskFromMaster() throws RemoteException {
             Task task = stub.getRemoteTask(this.getBagID());
             addTask(task);
+            System.out.println("Got task with ID: " + task.getID() + " from master");
     }
 
     public void notifyMaster() throws RemoteException, UnknownHostException {
@@ -88,6 +89,7 @@ class NodeWorker extends Worker {
         task.run();
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID(), nodeBag.getBagID());
+            System.out.println("Returned task with ID: " + task.getID() + " and result: " + task.getResult() + " to master");
         }catch(Exception e){e.printStackTrace();}
         //System.out.println("Finished task");
     }
