@@ -51,6 +51,7 @@ public class NodeBag extends BagOfTasks {
         stub.identify((localhost.getHostName()).trim(), numberOfWorkers);
 
          */
+        System.out.println("Node ID: " + this.getBagID());
         stub.identify(this.getBagID(),numberOfWorkers);
     }
 }
