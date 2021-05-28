@@ -21,6 +21,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
        super();
        this.numberOfWorkers = numberOfWorkers;
        this.remoteTasks = new HashMap<UUID, Task>();
+       this.nodeTasks = new HashMap<UUID,Set<UUID>>();
        this.continuations = new DependencyGraph(this);
        System.out.println("MasterBag initialized with: "+numberOfWorkers+" workers");
        initWorkers(numberOfWorkers);
