@@ -23,7 +23,7 @@ class MasterUser {
         logFileName = LogRunTime.createFile();
 
         int runs = 1;
-        int warmups = 0;
+        int warmups = 1;
         int tasksToRun = 40;
 
         System.out.println("Warming up "+warmups+" times");
@@ -45,7 +45,7 @@ class MasterUser {
         System.out.println(averageOutput);
         LogRunTime.writeFile(logFileName, averageOutput);
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
-        masterBag.statusTimer.cancel();
+        //masterBag.statusTimer.cancel();
         LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
         LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
         LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());

@@ -10,7 +10,7 @@ import java.util.*;
 public class MasterBag extends BagOfTasks implements MasterAPI {
     protected HashMap<UUID, Task> runnableTasks; //Catalogues all unfinished independent tasks by their IDs so the results from remote nodes can be properly assigned
     protected HashMap<UUID, Set<UUID>> nodeTasks; //Keeps track of which nodes currently have which tasks.
-    protected static HashMap<UUID, Boolean> timeouts;
+    protected HashMap<UUID, Boolean> timeouts;
     protected DependencyGraph continuations;
     private static MasterAPI api;
     private int numberOfWorkers;
@@ -154,7 +154,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         taskCount = 0;
     }
 
-    public static HashMap<UUID, Boolean> getTimeouts() {
+    public HashMap<UUID, Boolean> getTimeouts() {
         return timeouts;
     }
 
