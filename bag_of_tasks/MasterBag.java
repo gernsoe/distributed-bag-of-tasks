@@ -8,8 +8,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class MasterBag extends BagOfTasks implements MasterAPI {
-    protected HashMap<UUID, Task> remoteTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
-    protected HashMap<UUID, Set<UUID>> nodeTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
+    protected HashMap<UUID, Task> runnableTasks; //Catalogues all unfinished independent tasks by their IDs so the results from remote nodes can be properly assigned
+    protected HashMap<UUID, Set<UUID>> nodeTasks; //Keeps track of which nodes currently have which tasks.
     protected static HashMap<UUID, Boolean> timeouts;
     protected DependencyGraph continuations;
     private static MasterAPI api;
@@ -24,7 +24,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     public MasterBag(int numberOfWorkers,int timeout_ms, int status_ms) throws RemoteException {
        super();
        this.numberOfWorkers = numberOfWorkers;
-       this.remoteTasks = new HashMap<UUID, Task>();
+       this.runnableTasks = new HashMap<UUID, Task>();
        this.nodeTasks = new HashMap<UUID,Set<UUID>>();
        this.timeouts = new HashMap<UUID, Boolean>();
        this.continuations = new DependencyGraph(this);
@@ -51,7 +51,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
     public synchronized void submitTask(Task t) {
         addTask(t);
-        remoteTasks.put(t.getID(),t);
+        runnableTasks.put(t.getID(),t);
     }
 
     public synchronized Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
@@ -93,6 +93,13 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         }
     }
 
+    public synchronized void restoreLostTasks(UUID nodeID){
+        for(UUID taskID : nodeTasks.get(nodeID)){
+            addTask(runnableTasks.get(taskID));
+        }
+        nodeTasks.remove(nodeID);
+    }
+
     public Task getRemoteTask(UUID nodeID){
         Task t = getTask();
         synchronized (this){
@@ -103,7 +110,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID, UUID nodeID){
         try {
-            Task t = remoteTasks.remove(ID);
+            Task t = runnableTasks.remove(ID);
             t.setResult(result);
             //System.out.println("Releasing continuations..");
             continuations.releaseContinuations(t);
