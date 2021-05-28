@@ -10,27 +10,41 @@ import java.util.*;
 public class MasterBag extends BagOfTasks implements MasterAPI {
     protected HashMap<UUID, Task> remoteTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
     protected HashMap<UUID, Set<UUID>> nodeTasks; //Catalogues all the tasks by their IDs so the results from remote nodes can be properly assigned
+    protected static HashMap<UUID, Boolean> timeouts;
     protected DependencyGraph continuations;
     private static MasterAPI api;
     private int numberOfWorkers;
     protected int taskCount=0;
     private int numberOfNodes = 0;
     private int totalNumberOfWorkers = 0;
+    private Timer timeoutTimer;
+    public Timer statusTimer;
 
-    public MasterBag(int numberOfWorkers) throws RemoteException {
+
+    public MasterBag(int numberOfWorkers,int timeout_ms, int status_ms) throws RemoteException {
        super();
        this.numberOfWorkers = numberOfWorkers;
        this.remoteTasks = new HashMap<UUID, Task>();
        this.nodeTasks = new HashMap<UUID,Set<UUID>>();
+       this.timeouts = new HashMap<UUID, Boolean>();
        this.continuations = new DependencyGraph(this);
        System.out.println("MasterBag initialized with: "+numberOfWorkers+" workers");
        initWorkers(numberOfWorkers);
        api = this;
+       this.timeoutTimer = new Timer();
+       timeoutTimer.schedule(new TimeoutMonitor(this),0,timeout_ms);
+       this.statusTimer = new Timer();
+       statusTimer.schedule(new StatusMonitor(this),0,status_ms);
     }
 
-    public void identify(UUID nodeID, int numberOfNodeWorkers){
+    public synchronized void signal(UUID nodeID){
+        timeouts.put(nodeID,true);
+    }
+
+    public synchronized void identify(UUID nodeID, int numberOfNodeWorkers){
         System.out.println("Node connected with ID: "+nodeID);
         nodeTasks.put(nodeID,new HashSet<UUID>());
+        timeouts.put(nodeID,true);
         numberOfNodes++;
         totalNumberOfWorkers += numberOfNodeWorkers;
     }
@@ -132,6 +146,12 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     public synchronized void resetTaskCount(){
         taskCount = 0;
     }
+
+    public static HashMap<UUID, Boolean> getTimeouts() {
+        return timeouts;
+    }
+
+
 }
 
 class MasterWorker extends Worker {

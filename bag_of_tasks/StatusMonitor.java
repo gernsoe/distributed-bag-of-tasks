@@ -2,9 +2,9 @@ package bag_of_tasks;
 
 import java.util.TimerTask;
 
-public class MasterMonitor extends TimerTask {
+public class StatusMonitor extends TimerTask {
     MasterBag masterBag;
-    public MasterMonitor(MasterBag masterBag){
+    public StatusMonitor(MasterBag masterBag){
         this.masterBag = masterBag;
     }
 

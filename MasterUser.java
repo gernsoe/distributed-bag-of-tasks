@@ -17,10 +17,8 @@ class MasterUser {
         setHost(args);
 
         int numberOfWorkers = 0;
-        MasterBag masterBag = new MasterBag(numberOfWorkers);
+        MasterBag masterBag = new MasterBag(numberOfWorkers,10000,2000);
         MasterBag.register();
-        Timer timer = new Timer();
-        timer.schedule(new MasterMonitor(masterBag),0,2000);
 
         logFileName = LogRunTime.createFile();
 
@@ -47,7 +45,7 @@ class MasterUser {
         System.out.println(averageOutput);
         LogRunTime.writeFile(logFileName, averageOutput);
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
-        timer.cancel();
+        masterBag.statusTimer.cancel();
         LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
         LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
         LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());

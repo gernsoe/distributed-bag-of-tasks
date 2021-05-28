@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Timer;
 
 public class NodeBag extends BagOfTasks {
     MasterAPI stub;
@@ -26,6 +27,9 @@ public class NodeBag extends BagOfTasks {
         initWorkers(numberOfWorkers);
         TaskRetriever taskRetriever = new TaskRetriever(this);
         taskRetriever.start();
+        Timer timer = new Timer();
+        timer.schedule(new SignalSender(this),0,1000);
+        System.setProperty("sun.rmi.transport.tcp.responseTimeout", "10000");
     }
 
     public void initWorkers(int numberOfWorkers){
