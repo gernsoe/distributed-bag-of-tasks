@@ -7,7 +7,8 @@ public class LogRunTime {
     public static String createFile() {
         try {
             String date = getCurrentDate();
-            File newLog = new File("Logs\\"+date);
+            String fileName = "Logs\\"+date+".txt";
+            File newLog = new File(fileName);
             if (newLog.createNewFile()) {
                 System.out.println("New Log created: " + newLog.getName());
                 return date;
