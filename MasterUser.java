@@ -11,7 +11,7 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 5;
+        int numberOfWorkers = 4;
         MasterBag masterBag = new MasterBag(numberOfWorkers,30000,2000);
         MasterBag.register();
 
@@ -19,7 +19,7 @@ class MasterUser {
 
         int runs = 5;
         int warmups = 3;
-        int tasksToRun = 40; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
+        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
 
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
@@ -71,17 +71,26 @@ class MasterUser {
         for(int i = 0; i<numOfTasks; i++){
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
-            Task t2 = masterBag.continueWith(t,a->(int)a+2);
-            Task t3 = masterBag.continueWith(t,a->(int)a+2);
-            Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a+(int)b);
+            Task t2 = masterBag.continueWith(t,a->{
+                int c = 0;
+                for(int k=0; k < Integer.MAX_VALUE/2; k++){
+                    for(int j=0; j < 10; j++){
+                        c++;
+                        if(c > (Integer.MAX_VALUE/4)){
+                            c = 0;
+                        }
+                    }
+                }
+                return a;
+            });
+            Task t3 = masterBag.combineWith(t,t2,(a,b)->(int)a-(int)b);
             futures.add(t);
             futures.add(t2);
             futures.add(t3);
-            futures.add(t4);
         }
 
         for(Task t : futures) {
-            t.getResult();
+            System.out.println(t.getResult());
         }
 
         String outputString = "Time to process: "+masterBag.getTaskCount()+" tasks "+((double)System.nanoTime()-startTime)/1e9+"s";

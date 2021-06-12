@@ -38,7 +38,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     }
 
     public synchronized void signal(UUID nodeID){
-        System.out.println("signal received");
         timeouts.put(nodeID,true);
     }
 
