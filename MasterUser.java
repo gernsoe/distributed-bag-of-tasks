@@ -40,7 +40,7 @@ class MasterUser {
         System.out.println(averageOutput);
         LogRunTime.writeFile(logFileName, averageOutput);
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
-        //masterBag.statusTimer.cancel();
+        masterBag.statusTimer.cancel();
         LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
         LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
         LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());
@@ -72,6 +72,8 @@ class MasterUser {
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->(int)a+2);
+
+
             Task t3 = masterBag.continueWith(t,a->(int)a+2);
             Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a+(int)b);
             futures.add(t);
@@ -79,15 +81,7 @@ class MasterUser {
             futures.add(t3);
             futures.add(t4);
         }
-        /*
-        for(Task t : futures){
-            try {
-                System.out.println("The result of task "+t+" is:"+t.getResult());
-            } catch (Exception e){e.printStackTrace();;}
-        }
-         */
-        //System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
-        //System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
+
         for(Task t : futures) {
             t.getResult();
         }
