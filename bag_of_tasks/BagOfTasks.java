@@ -2,6 +2,7 @@ package bag_of_tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -9,8 +10,10 @@ public abstract class BagOfTasks {
 
     protected ExtendedQueue<Task> taskBag;
     protected List<Worker> workers;
+    protected UUID bagID;
 
     protected BagOfTasks(){
+        bagID = UUID.randomUUID();
         this.taskBag = new ExtendedQueue<Task>(){};
         this.workers = new ArrayList<Worker>(){};
     }
@@ -33,4 +36,7 @@ public abstract class BagOfTasks {
 
     abstract public void initWorkers(int numberOfWorkers);
 
+    public UUID getBagID() {
+        return bagID;
+    }
 }

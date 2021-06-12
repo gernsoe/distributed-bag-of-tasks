@@ -1,13 +1,8 @@
 import bag_of_tasks.*;
 
-import java.lang.reflect.Array;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Timer;
-import java.util.concurrent.LinkedBlockingQueue;
 
 class MasterUser {
 
@@ -16,17 +11,15 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 0;
-        MasterBag masterBag = new MasterBag(numberOfWorkers);
+        int numberOfWorkers = 5;
+        MasterBag masterBag = new MasterBag(numberOfWorkers,30000,2000);
         MasterBag.register();
-        Timer timer = new Timer();
-        //timer.schedule(new MasterMonitor(masterBag),0,2000);
 
         logFileName = LogRunTime.createFile();
 
-        int runs = 5;
-        int warmups = 3;
-        int tasksToRun = 50;
+        int runs = 1;
+        int warmups = 1;
+        int tasksToRun = 40;
 
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
@@ -47,7 +40,7 @@ class MasterUser {
         System.out.println(averageOutput);
         LogRunTime.writeFile(logFileName, averageOutput);
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
-        timer.cancel();
+        masterBag.statusTimer.cancel();
         LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
         LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
         LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());
@@ -78,27 +71,23 @@ class MasterUser {
         for(int i = 0; i<numOfTasks; i++){
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
-            Task t2 = masterBag.continueWith(t,a->(int)a/2);
-            Task t3 = masterBag.continueWith(t,a->(int)a/2);
-            Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a-(int)b);
+            Task t2 = masterBag.continueWith(t,a->(int)a+2);
+
+
+            Task t3 = masterBag.continueWith(t,a->(int)a+2);
+            Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a+(int)b);
             futures.add(t);
             futures.add(t2);
             futures.add(t3);
             futures.add(t4);
         }
-        /*
-        for(Task t : futures){
-            try {
-                System.out.println("The result of task "+t+" is:"+t.getResult());
-            } catch (Exception e){e.printStackTrace();;}
+
+        for(Task t : futures) {
+            t.getResult();
         }
-         */
 
-        System.out.println("\nFinal result: "+futures.get(futures.size()-1).getResult());
-        //System.out.println("Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s");
+        String outputString = "Time to process: "+masterBag.getTaskCount()+" tasks "+((double)System.nanoTime()-startTime)/1e9+"s";
         masterBag.resetTaskCount();
-
-        String outputString = "Time to process: "+((double)System.nanoTime()-startTime)/1e9+"s";
         System.out.println(outputString);
         if (writeToFile) {
             LogRunTime.writeFile(logFileName, outputString);
