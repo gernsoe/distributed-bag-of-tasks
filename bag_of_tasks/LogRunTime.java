@@ -11,6 +11,7 @@ public class LogRunTime {
             String date = getCurrentDate();
             String fileName = "Logs\\"+date+".txt";
             File newLog = new File(fileName);
+            newLog.getParentFile().mkdirs();
             if (newLog.createNewFile()) {
                 System.out.println("New Log created: " + newLog.getName());
                 return fileName;
