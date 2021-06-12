@@ -17,9 +17,9 @@ class MasterUser {
 
         logFileName = LogRunTime.createFile();
 
-        int runs = 1;
-        int warmups = 1;
-        int tasksToRun = 40;
+        int runs = 5;
+        int warmups = 3;
+        int tasksToRun = 40; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
 
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
@@ -72,8 +72,6 @@ class MasterUser {
             Task t = new PrimeTask(i);
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->(int)a+2);
-
-
             Task t3 = masterBag.continueWith(t,a->(int)a+2);
             Task t4 = masterBag.combineWith(t2,t3,(a,b)->(int)a+(int)b);
             futures.add(t);
