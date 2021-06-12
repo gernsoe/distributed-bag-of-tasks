@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Timer;
 
 public class NodeBag extends BagOfTasks {
     MasterAPI stub;
@@ -27,6 +28,9 @@ public class NodeBag extends BagOfTasks {
         initWorkers(numberOfWorkers);
         TaskRetriever taskRetriever = new TaskRetriever(this);
         taskRetriever.start();
+        Timer timer = new Timer();
+        timer.schedule(new SignalSender(this),0,1000);
+        System.setProperty("sun.rmi.transport.tcp.responseTimeout", "10000");
     }
 
     public void initWorkers(int numberOfWorkers){
@@ -38,10 +42,9 @@ public class NodeBag extends BagOfTasks {
     }
 
     public void takeTaskFromMaster() throws RemoteException {
-
-            Task task = stub.getRemoteTask();
-
+            Task task = stub.getRemoteTask(this.getBagID());
             addTask(task);
+            System.out.println("Got task with ID: " + task.getID() + " from master");
     }
 
     public void notifyMaster() throws RemoteException, UnknownHostException {
@@ -50,7 +53,8 @@ public class NodeBag extends BagOfTasks {
         stub.identify((localhost.getHostName()).trim(), numberOfWorkers);
 
          */
-        stub.identify("HPC",numberOfWorkers);
+        System.out.println("Node ID: " + bagID);
+        stub.identify(bagID,numberOfWorkers);
     }
 }
 
@@ -85,7 +89,8 @@ class NodeWorker extends Worker {
 
         task.run();
         try {
-            nodeBag.stub.returnFinishedTask(task.getResult(), task.getID());
+            nodeBag.stub.returnFinishedTask(task.getResult(), task.getID(), nodeBag.getBagID());
+            System.out.println("Returned task with ID: " + task.getID() + " and result: " + task.getResult() + " to master");
         }catch(Exception e){e.printStackTrace();}
         //System.out.println("Finished task");
     }
