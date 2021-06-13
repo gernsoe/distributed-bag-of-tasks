@@ -38,7 +38,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     }
 
     public synchronized void signal(UUID nodeID){
-        System.out.println("signal received");
         timeouts.put(nodeID,true);
     }
 
@@ -55,42 +54,46 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
         runnableTasks.put(t.getID(),t);
     }
 
-    public synchronized Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
+    public Task continueWith(Task predecessor, ContinueInput inputFunction) throws Exception{
         SystemTask sysTask = new ContinueTask(inputFunction,predecessor.getID());
         submitIfReady(sysTask, predecessor);
         return sysTask;
     }
 
-    public synchronized Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
+    public Task combineWith(Task predecessor1, Task predecessor2, CombineInput inputFunction) throws Exception{
         SystemTask sysTask = new CombineTask(inputFunction,predecessor1.getID(),predecessor2.getID());
         submitIfReady(sysTask, predecessor1, predecessor2);
         return sysTask;
     }
 
-    protected synchronized void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
-        if(predecessor.getIsDone()){
-            sysTask.setParameter(predecessor.getID(),predecessor.getResult());
-            submitTask(sysTask);
-        }else{
-            //System.out.println("added to continuations");
-            continuations.addContinuation(predecessor,sysTask);
+    protected void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
+        synchronized (continuations) {
+            if (predecessor.getIsDone()) {
+                sysTask.setParameter(predecessor.getID(), predecessor.getResult());
+                submitTask(sysTask);
+            } else {
+                //System.out.println("added to continuations");
+                continuations.addContinuation(predecessor, sysTask);
+            }
         }
     }
 
     public synchronized void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
-        if(predecessor1.getIsDone() && predecessor2.getIsDone()){
-            sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
-            sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
-            submitTask(sysTask);
-        }else if(predecessor1.getIsDone()){
-            sysTask.setParameter(predecessor1.getID(),predecessor1.getResult());
-            continuations.addContinuation(predecessor2,sysTask);
-        }else if(predecessor2.getIsDone()){
-            sysTask.setParameter(predecessor2.getID(),predecessor2.getResult());
-            continuations.addContinuation(predecessor1,sysTask);
-        }else{
-            continuations.addContinuation(predecessor1,sysTask);
-            continuations.addContinuation(predecessor2,sysTask);
+        synchronized (continuations) {
+            if (predecessor1.getIsDone() && predecessor2.getIsDone()) {
+                sysTask.setParameter(predecessor1.getID(), predecessor1.getResult());
+                sysTask.setParameter(predecessor2.getID(), predecessor2.getResult());
+                submitTask(sysTask);
+            } else if (predecessor1.getIsDone()) {
+                sysTask.setParameter(predecessor1.getID(), predecessor1.getResult());
+                continuations.addContinuation(predecessor2, sysTask);
+            } else if (predecessor2.getIsDone()) {
+                sysTask.setParameter(predecessor2.getID(), predecessor2.getResult());
+                continuations.addContinuation(predecessor1, sysTask);
+            } else {
+                continuations.addContinuation(predecessor1, sysTask);
+                continuations.addContinuation(predecessor2, sysTask);
+            }
         }
     }
 
@@ -114,7 +117,9 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
             Task t = runnableTasks.remove(ID);
             t.setResult(result);
             //System.out.println("Releasing continuations..");
-            continuations.releaseContinuations(t);
+            synchronized (continuations) {
+                continuations.releaseContinuations(t);
+            }
             taskCount++;
             if(nodeID != this.bagID){ //Since tasks are only added to nodeTasks through getRemoteTask call, the MasterBag ID is not present in nodeTasks
                 nodeTasks.get(nodeID).remove(ID);

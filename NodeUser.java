@@ -6,7 +6,7 @@ public class NodeUser {
     public static void main(String []args) throws RemoteException {
         setHost(args);
 
-        NodeBag node = new NodeBag(10, System.getProperty("java.rmi.server.hostname"));
+        NodeBag node = new NodeBag(4, System.getProperty("java.rmi.server.hostname"));
     }
 
     public static void setHost(String[] ipv4){
