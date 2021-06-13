@@ -39,5 +39,13 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
         this.threshold = threshold;
     }
 
+    public synchronized void incrementThreshold(){
+        threshold++;
+    }
+
+    public synchronized void decrementThreshold(){
+        threshold--;
+    }
+
 
 }
