@@ -7,7 +7,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class MasterBag extends BagOfTasks implements MasterAPI {
+public class MasterBag extends BagOfTasks implements MasterAPI{
     protected HashMap<UUID, Task> runnableTasks; //Catalogues all unfinished independent tasks by their IDs so the results from remote nodes can be properly assigned
     protected HashMap<UUID, Set<UUID>> nodeTasks; //Keeps track of which nodes currently have which tasks.
     protected HashMap<UUID, Boolean> timeouts;
@@ -21,7 +21,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     public Timer statusTimer;
 
 
-    public MasterBag(int numberOfWorkers,int timeout_ms, int status_ms) throws RemoteException {
+    protected MasterBag(int numberOfWorkers,int timeout_ms, int status_ms) throws RemoteException {
        super();
        this.numberOfWorkers = numberOfWorkers;
        this.runnableTasks = new HashMap<UUID, Task>();
