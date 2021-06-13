@@ -29,7 +29,7 @@ public class NodeBag extends BagOfTasks {
         TaskRetriever taskRetriever = new TaskRetriever(this);
         taskRetriever.start();
         Timer timer = new Timer();
-        timer.schedule(new SignalSender(this),0,1000);
+        timer.schedule(new SignalSender(this),0,3000);
         System.setProperty("sun.rmi.transport.tcp.responseTimeout", "10000");
     }
 
