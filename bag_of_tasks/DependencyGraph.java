@@ -11,13 +11,13 @@ public class DependencyGraph {
         this.masterBag = masterBag;
     }
 
-    public void addContinuation(Task dependant, SystemTask continueTask) {
-        if (dependencyMap.containsKey(dependant)) {
-            dependencyMap.get(dependant).add(continueTask);
+    public void addContinuation(Task antecedent, SystemTask continueTask) {
+        if (dependencyMap.containsKey(antecedent)) {
+            dependencyMap.get(antecedent).add(continueTask);
         } else {
             Set continueSet = new HashSet<SystemTask>();
             continueSet.add(continueTask);
-            dependencyMap.put(dependant, continueSet);
+            dependencyMap.put(antecedent, continueSet);
         }
     }
 

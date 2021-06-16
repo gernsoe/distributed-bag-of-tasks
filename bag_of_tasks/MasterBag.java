@@ -114,9 +114,12 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID, UUID nodeID){
         try {
+            if(!runnableTasks.containsKey(ID)) {
+                System.out.println("Duplicate result received, discarding duplicate");
+                return;
+            }
             Task t = runnableTasks.remove(ID);
             t.setResult(result);
-            //System.out.println("Releasing continuations..");
             synchronized (continuations) {
                 continuations.releaseContinuations(t);
             }
@@ -163,8 +166,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI {
     public HashMap<UUID, Boolean> getTimeouts() {
         return timeouts;
     }
-
-
 }
 
 class MasterWorker extends Worker {

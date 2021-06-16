@@ -11,30 +11,28 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 4;
+        int numberOfWorkers = 1;
         MasterBag masterBag = new MasterBag(numberOfWorkers,60000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile();
 
-        int runs = 5;
-        int warmups = 5;
-        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
-
+        int runs = 1;
+        int warmups = 1;
+        int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
             runStuff(masterBag,tasksToRun,false);
         }
 
         System.out.println("Warmed up, now running "+runs+" runs");
-
         LogRunTime.writeFile(logFileName, "Running " + tasksToRun + " tasks");
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
             runStuff(masterBag,tasksToRun,true);
-
         }
+
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
         String averageOutput = "Average execution time across "+runs+" runs: "+time+"s";
         System.out.println(averageOutput);
@@ -60,7 +58,6 @@ class MasterUser {
             System.out.println("Please supply host public ipv4 address as argument");
             System.exit(0);
         }
-
         System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
     }
 
@@ -100,9 +97,13 @@ class MasterUser {
             futures.add(t3);
         }
 
+        ArrayList<Integer> results = new ArrayList<Integer>();
         for(Task t : futures) {
-            System.out.println(t.getResult());
+            int res = (int) t.getResult();
+            System.out.println(res);
+            results.add(res);
         }
+
 
         String outputString = "Time to process: "+masterBag.getTaskCount()+" tasks "+((double)System.nanoTime()-startTime)/1e9+"s";
         masterBag.resetTaskCount();
