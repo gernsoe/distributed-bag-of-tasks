@@ -10,9 +10,11 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
         super();
     }
 
-    public synchronized T eTake() throws  InterruptedException{
+    public T eTake() throws  InterruptedException{
         T e = take();
-        notify();
+        synchronized (this) {
+            notify();
+        }
         return e;
     }
 
