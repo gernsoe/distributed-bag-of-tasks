@@ -10,7 +10,7 @@ public class PrimeTask extends Task {
     public Integer call() throws InterruptedException{
         int counter = 0;
         for(int i=0; i < Integer.MAX_VALUE/2; i++){
-            for(int j=0; j < numberToFind+1; j++){
+            for(int j=0; j < 10; j++){
                 counter++;
                 if(counter > (Integer.MAX_VALUE/4)){
                     counter = 0;
