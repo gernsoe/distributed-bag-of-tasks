@@ -10,23 +10,19 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
         super();
     }
 
-    public T eTake() throws  InterruptedException{
-        synchronized (this) {
-            notify();
-        }
+    public synchronized T eTake() throws  InterruptedException{
+        notify();
         T e = take();
         return e;
     }
 
-    public void ePut(T e) throws InterruptedException{
+    public synchronized void ePut(T e) throws InterruptedException{
         while(size() >= threshold){
-            synchronized (this) {
                 try {
                     wait();
                 } catch (InterruptedException err) {
                     err.printStackTrace();
                 }
-            }
         }
         put(e);
     }
@@ -35,7 +31,7 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
         return threshold;
     }
 
-    public void setThreshold(int threshold) {
+    public void setThreshold(int threshold){
         this.threshold = threshold;
     }
 

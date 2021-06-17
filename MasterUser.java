@@ -11,15 +11,15 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 1;
+        int numberOfWorkers = 4;
         UI masterBag = new UI(numberOfWorkers,60000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
-        int runs = 1;
-        int warmups = 1;
-        int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
+        int runs = 5;
+        int warmups = 5;
+        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
             runStuff(masterBag,tasksToRun,false);
