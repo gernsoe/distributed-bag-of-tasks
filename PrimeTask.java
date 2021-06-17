@@ -19,16 +19,4 @@ public class PrimeTask extends Task {
         }
         return numberToFind;
     }
-
-    public int fact(int n) {
-        if (n==0) {
-            return 1;
-        } else {
-            return (n*fact(n-1));
-        }
-    }
-
-    public int getInput() {
-        return numberToFind;
-    }
 }

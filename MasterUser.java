@@ -14,15 +14,15 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 2;
+        int numberOfWorkers = 4;
         UI masterBag = new UI(numberOfWorkers,60000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
-        int runs = 1;
-        int warmups = 0;
-        int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
+        int runs = 5;
+        int warmups = 5;
+        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
             runStuff(masterBag,tasksToRun,false);
@@ -33,7 +33,7 @@ class MasterUser {
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuffFunctional(masterBag,tasksToRun,false);
+            runStuff(masterBag,tasksToRun,true);
         }
 
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
@@ -100,11 +100,11 @@ class MasterUser {
             futures.add(t3);
         }
 
-        ArrayList<Integer> results = new ArrayList<Integer>();
+        //ArrayList<Integer> results = new ArrayList<Integer>();
         for(Task t : futures) {
-            int res = (int) t.getResult();
-            System.out.println(res);
-            results.add(res);
+            //int res = (int) t.getResult();
+            System.out.println(t.getResult());
+            //results.add(res);
         }
 
 
@@ -123,7 +123,7 @@ class MasterUser {
         startTime = System.nanoTime();
         for(int i = 1; i<numOfTasks; i++){
             Task t = new squareTask(i);
-            Task tMsg = new MessageTask("The area of a circle with radius "+i+" : ");
+            Task tMsg = new MessageTask("The area of a circle with radius "+i+" (r*r,area) : ");
             Task t2 = masterBag.continueWith(t,a->{
                 try {
                     Thread.sleep(2000);
@@ -143,12 +143,8 @@ class MasterUser {
             results.add(t4);
         }
 
-
-        //ArrayList<Integer> results = new ArrayList<Integer>();
         for(Task t : results) {
-            //int res = (int) t.getResult();
             System.out.println(t.getResult());
-            //results.add(res);
         }
 
 

@@ -11,13 +11,13 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
     }
 
     public synchronized T eTake() throws  InterruptedException{
-        notify();
         T e = take();
+        notify();
         return e;
     }
 
     public synchronized void ePut(T e) throws InterruptedException{
-        while(size() >= threshold){
+        while(size() > threshold){
                 try {
                     wait();
                 } catch (InterruptedException err) {
