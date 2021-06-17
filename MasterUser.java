@@ -15,7 +15,7 @@ class MasterUser {
         MasterBag masterBag = new MasterBag(numberOfWorkers,60000,2000);
         MasterBag.register();
 
-        logFileName = LogRunTime.createFile();
+        logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
         int runs = 1;
         int warmups = 1;
@@ -38,7 +38,7 @@ class MasterUser {
         System.out.println(averageOutput);
         LogRunTime.writeFile(logFileName, averageOutput);
         System.out.println("Average execution time across "+runs+" runs: "+time+"s");
-        masterBag.statusTimer.cancel();
+        masterBag.cancelTimer();
         LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
         LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
         LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());
@@ -61,7 +61,7 @@ class MasterUser {
         System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
     }
 
-    public static void runStuff(MasterBag masterBag,int numOfTasks, boolean writeToFile) throws Exception{
+    public static void runStuff(UI masterBag,int numOfTasks, boolean writeToFile) throws Exception{
         ArrayList<Task> futures = new ArrayList<Task>();
         long startTime;
         startTime = System.nanoTime();
