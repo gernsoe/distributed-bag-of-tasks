@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import java.lang.reflect.Array;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 
 class MasterUser {
@@ -130,8 +131,8 @@ class MasterUser {
                 return (int)a*Math.PI;
             });
             Task t3 = masterBag.combineWith(t,t2,(a,b)->{
-                Pair<Integer, Double> p = new Pair(a,b);
-                return p;
+                AbstractMap.SimpleEntry<Integer,Double> pair = new AbstractMap.SimpleEntry(a,b);
+                return pair;
             });
             Task t4 = masterBag.combineWith(t3,tMsg,(r,msg)->{
                 return (String) msg + r;
