@@ -13,7 +13,7 @@ public class NodeBag extends BagOfTasks {
 
     public NodeBag(int numberOfWorkers, String hostname) {
         super();
-        taskBag.setThreshold(1);
+        taskBag.setThreshold(numberOfWorkers);
         this.numberOfWorkers = numberOfWorkers;
         int port = 1099;
         try {
@@ -29,7 +29,7 @@ public class NodeBag extends BagOfTasks {
         TaskRetriever taskRetriever = new TaskRetriever(this);
         taskRetriever.start();
         Timer timer = new Timer();
-        timer.schedule(new SignalSender(this),0,1000);
+        timer.schedule(new SignalSender(this),0,3000);
         System.setProperty("sun.rmi.transport.tcp.responseTimeout", "10000");
     }
 
@@ -86,11 +86,12 @@ class NodeWorker extends Worker {
     public void work() {
 
         Task task = nodeBag.getTask();
-
+        nodeBag.taskBag.decrementThreshold();
         task.run();
         try {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID(), nodeBag.getBagID());
             System.out.println("Returned task with ID: " + task.getID() + " and result: " + task.getResult() + " to master");
+            nodeBag.taskBag.incrementThreshold();
         }catch(Exception e){e.printStackTrace();}
         //System.out.println("Finished task");
     }

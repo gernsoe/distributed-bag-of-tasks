@@ -32,10 +32,6 @@ public abstract class SystemTask<A,T> extends Task<T>{
         }
     }
 
-    public void setPredecessor_1_ID(UUID predecessor_1_ID) { this.predecessor_1_ID = predecessor_1_ID; }
-
-    public void setPredecessor_2_ID(UUID predecessor_2_ID) { this.predecessor_2_ID = predecessor_2_ID; }
-
     protected TaskType getType() { return type; }
 
     protected void setType(TaskType type) { this.type = type; }

@@ -19,7 +19,7 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
     }
 
     public void ePut(T e) throws InterruptedException{
-        while(size() >= threshold){
+        while(size() > threshold){
             synchronized (this) {
                 try {
                     wait();
@@ -37,6 +37,14 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
+    }
+
+    public synchronized void incrementThreshold(){
+        threshold++;
+    }
+
+    public synchronized void decrementThreshold(){
+        threshold--;
     }
 
 
