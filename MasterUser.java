@@ -1,5 +1,7 @@
 import bag_of_tasks.*;
+import javafx.util.Pair;
 
+import java.lang.reflect.Array;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -11,15 +13,15 @@ class MasterUser {
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         setHost(args);
 
-        int numberOfWorkers = 4;
+        int numberOfWorkers = 2;
         UI masterBag = new UI(numberOfWorkers,60000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
-        int runs = 5;
-        int warmups = 5;
-        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
+        int runs = 1;
+        int warmups = 0;
+        int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
             runStuff(masterBag,tasksToRun,false);
@@ -30,7 +32,7 @@ class MasterUser {
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuff(masterBag,tasksToRun,true);
+            runStuffFunctional(masterBag,tasksToRun,false);
         }
 
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
@@ -113,4 +115,49 @@ class MasterUser {
         }
         //masterBag.flush();
     }
+
+    public static void runStuffFunctional(UI masterBag,int numOfTasks, boolean writeToFile) throws Exception{
+        ArrayList<Task> results = new ArrayList<Task>();
+        long startTime;
+        startTime = System.nanoTime();
+        for(int i = 1; i<numOfTasks; i++){
+            Task t = new squareTask(i);
+            Task tMsg = new MessageTask("The area of a circle with radius "+i+" : ");
+            Task t2 = masterBag.continueWith(t,a->{
+                try {
+                    Thread.sleep(2000);
+                }catch (InterruptedException e){}
+                return (int)a*Math.PI;
+            });
+            Task t3 = masterBag.combineWith(t,t2,(a,b)->{
+                Pair<Integer, Double> p = new Pair(a,b);
+                return p;
+            });
+            Task t4 = masterBag.combineWith(t3,tMsg,(r,msg)->{
+                return (String) msg + r;
+            });
+            masterBag.submitTask(t);
+            masterBag.submitTask(tMsg);
+
+            results.add(t4);
+        }
+
+
+        //ArrayList<Integer> results = new ArrayList<Integer>();
+        for(Task t : results) {
+            //int res = (int) t.getResult();
+            System.out.println(t.getResult());
+            //results.add(res);
+        }
+
+
+        String outputString = "Time to process: "+masterBag.getTaskCount()+" tasks "+((double)System.nanoTime()-startTime)/1e9+"s";
+        masterBag.resetTaskCount();
+        System.out.println(outputString);
+        if (writeToFile) {
+            LogRunTime.writeFile(logFileName, outputString);
+        }
+        //masterBag.flush();
+    }
+
 }
