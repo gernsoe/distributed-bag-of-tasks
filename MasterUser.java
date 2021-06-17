@@ -12,7 +12,7 @@ class MasterUser {
         setHost(args);
 
         int numberOfWorkers = 1;
-        MasterBag masterBag = new MasterBag(numberOfWorkers,60000,2000);
+        UI masterBag = new UI(numberOfWorkers,60000,2000);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
