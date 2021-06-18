@@ -12,6 +12,6 @@ public class MasterMonitor extends TimerTask {
         System.out.println("TaskCount: "+masterBag.getTaskCount());
         System.out.println("Queue Size: "+masterBag.taskBag.size());
         //System.out.println("RemoteTasks Size: "+masterBag.runnableTasks.size());
-        System.out.println("NodeTasks size: "+masterBag.nodeTasks.size());
+        System.out.println("Connected nodes: "+masterBag.nodeTasks.size());
     }
 }

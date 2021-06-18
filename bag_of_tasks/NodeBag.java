@@ -43,8 +43,8 @@ public class NodeBag extends BagOfTasks {
 
     public void takeTaskFromMaster() throws RemoteException {
             Task task = stub.getRemoteTask(this.getBagID());
-            addTask(task);
             System.out.println("Got task with ID: " + task.getID() + " from master");
+            addTask(task);
     }
 
     public void notifyMaster() throws RemoteException, UnknownHostException {
