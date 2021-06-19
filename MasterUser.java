@@ -49,7 +49,7 @@ class MasterUser {
         long startTime;
         startTime = System.nanoTime();
         for(int i = 0; i<numOfTasks; i++){
-            Task t = new PrimeTask(i);
+            Task t = new TestTask(i);
             masterBag.submitTask(t);
             Task t2 = masterBag.continueWith(t,a->{
                 int c = 0;

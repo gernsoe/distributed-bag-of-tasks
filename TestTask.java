@@ -1,9 +1,9 @@
 import bag_of_tasks.*;
 
-public class PrimeTask extends Task {
+public class TestTask extends Task {
     int numberToFind;
 
-    public PrimeTask(int numberToFind){
+    public TestTask(int numberToFind){
         this.numberToFind = numberToFind;
     }
 

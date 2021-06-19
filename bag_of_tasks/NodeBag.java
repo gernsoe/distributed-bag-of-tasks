@@ -1,5 +1,6 @@
 package bag_of_tasks;
 
+import java.net.NoRouteToHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -66,8 +67,9 @@ class TaskRetriever extends Thread {
         while (true) {
             try {
                 nodeBag.takeTaskFromMaster();
-            } catch (RemoteException e) {
+            }  catch (RemoteException e) {
                 e.printStackTrace();
+                System.exit(-1);
             }
         }
     }
@@ -80,7 +82,6 @@ class NodeWorker extends Worker {
     }
 
     public void work() {
-
         Task task = nodeBag.getTask();
         nodeBag.taskBag.decrementThreshold();
         task.run();
@@ -88,7 +89,10 @@ class NodeWorker extends Worker {
             nodeBag.stub.returnFinishedTask(task.getResult(), task.getID(), nodeBag.getBagID());
             System.out.println("Returned task with ID: " + task.getID() + " and result: " + task.getResult() + " to master");
             nodeBag.taskBag.incrementThreshold();
-        }catch(Exception e){e.printStackTrace();}
+        } catch(Exception e){
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 }
 
