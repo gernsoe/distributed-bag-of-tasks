@@ -10,6 +10,7 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
 
     Boolean isDone = false;
     String errorMsg = null;
+    Exception exception;
     protected T result;
 
     protected Task(){
@@ -39,7 +40,7 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
         if (errorMsg == null) {
             return result;
         } else {
-            throw new Exception(errorMsg);
+            return (T) errorMsg;
         }
     }
 
@@ -56,7 +57,8 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
         if (isDone) {
             return;
         }
-        this.errorMsg = "Task failed with: " + e;
+        exception = e;
+        this.errorMsg = "Task("+ID+") failed with: " + e;
         isDone = true;
         notifyAll();
     }
@@ -67,5 +69,9 @@ public abstract class Task<T> implements Callable<T>, Runnable, Serializable {
 
     public Boolean getIsDone() {
         return isDone;
+    }
+
+    public void printStackTrace(){
+        exception.printStackTrace();
     }
 }

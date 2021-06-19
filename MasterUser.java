@@ -16,9 +16,9 @@ class MasterUser {
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
-        int runs = 1;
-        int warmups = 1;
-        int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
+        int runs = 5;
+        int warmups = 5;
+        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
             runStuff(masterBag,tasksToRun,false);
@@ -31,7 +31,6 @@ class MasterUser {
         for(int i = 0; i<runs; i++){
             runStuffFunctional(masterBag,tasksToRun,true);
         }
-
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
         String averageOutput = "Average execution time across "+runs+" runs: "+time+"s";
         System.out.println(averageOutput);
@@ -41,7 +40,6 @@ class MasterUser {
         LogRunTime.writeFile(logFileName, "Number of nodes: " + masterBag.getNumberOfNodes());
         LogRunTime.writeFile(logFileName, "Number of master workers: " + numberOfWorkers);
         LogRunTime.writeFile(logFileName, "Total number of workers across nodes: " + masterBag.getTotalWorkers());
-
     }
 
     public static void runStuff(MasterUI masterBag, int numOfTasks, boolean writeToFile) throws Exception{
@@ -80,13 +78,9 @@ class MasterUser {
             futures.add(t3);
         }
 
-        //ArrayList<Integer> results = new ArrayList<Integer>();
         for(Task t : futures) {
-            //int res = (int) t.getResult();
             System.out.println(t.getResult());
-            //results.add(res);
         }
-
 
         String outputString = "Time to process: "+masterBag.getTaskCount()+" tasks "+((double)System.nanoTime()-startTime)/1e9+"s";
         masterBag.resetTaskCount();
@@ -94,7 +88,7 @@ class MasterUser {
         if (writeToFile) {
             LogRunTime.writeFile(logFileName, outputString);
         }
-        //masterBag.flush();
+
     }
 
     public static void runStuffFunctional(MasterUI masterBag, int numOfTasks, boolean writeToFile) throws Exception{
@@ -135,7 +129,6 @@ class MasterUser {
         if (writeToFile) {
             LogRunTime.writeFile(logFileName, outputString);
         }
-        //masterBag.flush();
     }
 
 }
