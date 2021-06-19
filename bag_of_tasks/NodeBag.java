@@ -1,6 +1,5 @@
 package bag_of_tasks;
 
-import java.net.NoRouteToHostException;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -32,7 +31,6 @@ public class NodeBag extends BagOfTasks {
         taskRetriever.start();
         Timer timer = new Timer();
         timer.schedule(new SignalSender(this),0,ping_delay);
-        System.setProperty("sun.rmi.transport.tcp.responseTimeout", "10000");
     }
 
     public void initWorkers(int numberOfWorkers){
