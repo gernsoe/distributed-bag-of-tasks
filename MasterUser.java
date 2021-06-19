@@ -11,9 +11,7 @@ class MasterUser {
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
         int numberOfWorkers = 4;
-        int timeout_ms = 30000;
-        int status_ms = 2000;
-        MasterUI masterBag = new MasterUI(numberOfWorkers,timeout_ms,status_ms, args);
+        MasterUI masterBag = new MasterUI(numberOfWorkers, args);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results

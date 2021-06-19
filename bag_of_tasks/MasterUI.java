@@ -6,8 +6,8 @@ import java.rmi.RemoteException;
 public class MasterUI {
     static MasterBag masterBag;
 
-    public MasterUI(int numberOfWorkers, int timeout_ms, int status_ms, String[] args) throws RemoteException {
-        masterBag = new MasterBag(numberOfWorkers, timeout_ms, status_ms, args);
+    public MasterUI(int numberOfWorkers, String[] args) throws RemoteException {
+        masterBag = new MasterBag(numberOfWorkers, args);
     }
 
     public synchronized void submitTask(Task t) {

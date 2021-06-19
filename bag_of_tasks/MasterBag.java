@@ -19,9 +19,11 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
     private int totalNumberOfWorkers = 0;
     private Timer timeoutTimer;
     public Timer statusTimer;
+    int timeout_ms = 30000;
+    int status_ms = 2000;
 
 
-    protected MasterBag(int numberOfWorkers,int timeout_ms, int status_ms, String[] args) throws RemoteException {
+    protected MasterBag(int numberOfWorkers, String[] args) throws RemoteException {
        super();
        setHost(args);
        this.numberOfWorkers = numberOfWorkers;
