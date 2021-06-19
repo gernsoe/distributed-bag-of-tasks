@@ -29,10 +29,6 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
         put(e);
     }
 
-    public int getThreshold() {
-        return threshold;
-    }
-
     public void setThreshold(int threshold){
         this.threshold = threshold;
     }
@@ -45,6 +41,4 @@ public class ExtendedQueue<T> extends LinkedBlockingQueue<T> {
     public synchronized void decrementThreshold(){
         threshold--;
     }
-
-
 }
