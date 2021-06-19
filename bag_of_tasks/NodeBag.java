@@ -8,9 +8,12 @@ import java.util.Timer;
 public class NodeBag extends BagOfTasks {
     MasterAPI stub;
     private int numberOfWorkers;
+    private int ping_delay = 10000;
 
-    public NodeBag(int numberOfWorkers, String hostname) {
+    public NodeBag(int numberOfWorkers, String[] args) {
         super();
+        setHost(args);
+        String hostname = System.getProperty("java.rmi.server.hostname");
         taskBag.setThreshold(numberOfWorkers);
         this.numberOfWorkers = numberOfWorkers;
         int port = 1099;
@@ -27,7 +30,7 @@ public class NodeBag extends BagOfTasks {
         TaskRetriever taskRetriever = new TaskRetriever(this);
         taskRetriever.start();
         Timer timer = new Timer();
-        timer.schedule(new SignalSender(this),0,3000);
+        timer.schedule(new SignalSender(this),0,ping_delay);
         System.setProperty("sun.rmi.transport.tcp.responseTimeout", "10000");
     }
 

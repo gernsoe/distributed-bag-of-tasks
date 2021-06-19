@@ -10,10 +10,10 @@ class MasterUser {
     public static String logFileName;
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
-        setHost(args);
-
         int numberOfWorkers = 4;
-        UI masterBag = new UI(numberOfWorkers,60000,2000);
+        int timeout_ms = 30000;
+        int status_ms = 2000;
+        MasterUI masterBag = new MasterUI(numberOfWorkers,timeout_ms,status_ms, args);
         MasterBag.register();
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
@@ -46,23 +46,7 @@ class MasterUser {
 
     }
 
-    public static void setHost(String[] ipv4){
-        try {
-            if (ipv4[0].equals("marc")) {
-                System.setProperty("java.rmi.server.hostname", "80.162.217.75");
-            } else if (ipv4[0].equals("christian")) {
-                System.setProperty("java.rmi.server.hostname", "62.198.63.48");
-            } else {
-                System.setProperty("java.rmi.server.hostname", ipv4[0]);
-            }
-        }catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Please supply host public ipv4 address as argument");
-            System.exit(0);
-        }
-        System.out.println("Host is: "+System.getProperty("java.rmi.server.hostname"));
-    }
-
-    public static void runStuff(UI masterBag,int numOfTasks, boolean writeToFile) throws Exception{
+    public static void runStuff(MasterUI masterBag, int numOfTasks, boolean writeToFile) throws Exception{
         ArrayList<Task> futures = new ArrayList<Task>();
         long startTime;
         startTime = System.nanoTime();
@@ -115,7 +99,7 @@ class MasterUser {
         //masterBag.flush();
     }
 
-    public static void runStuffFunctional(UI masterBag,int numOfTasks, boolean writeToFile) throws Exception{
+    public static void runStuffFunctional(MasterUI masterBag, int numOfTasks, boolean writeToFile) throws Exception{
         ArrayList<Task> results = new ArrayList<Task>();
         long startTime;
         startTime = System.nanoTime();

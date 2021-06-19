@@ -3,11 +3,11 @@ package bag_of_tasks;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 
-public class UI {
+public class MasterUI {
     static MasterBag masterBag;
 
-    public UI(int numberOfWorkers,int timeout_ms, int status_ms) throws RemoteException {
-        masterBag = new MasterBag(numberOfWorkers, timeout_ms, status_ms);
+    public MasterUI(int numberOfWorkers, int timeout_ms, int status_ms, String[] args) throws RemoteException {
+        masterBag = new MasterBag(numberOfWorkers, timeout_ms, status_ms, args);
     }
 
     public synchronized void submitTask(Task t) {
