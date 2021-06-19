@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 public class NodeUser {
     public static void main(String[] args) throws RemoteException {
-        NodeUI node = new NodeUI(4, args);
+        int numberOfWorkers = 4;
+        NodeUI node = new NodeUI(numberOfWorkers, args);
     }
 }
