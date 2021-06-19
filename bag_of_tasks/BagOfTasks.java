@@ -3,8 +3,6 @@ package bag_of_tasks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class BagOfTasks {
 

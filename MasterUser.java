@@ -1,7 +1,5 @@
 import bag_of_tasks.*;
 
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 
@@ -9,7 +7,7 @@ class MasterUser {
 
     public static String logFileName;
 
-    public static void main(String[] args) throws RemoteException, AlreadyBoundException, Exception {
+    public static void main(String[] args) throws Exception {
         int numberOfWorkers = 4;
         MasterUI masterBag = new MasterUI(numberOfWorkers, args);
         MasterBag.register();

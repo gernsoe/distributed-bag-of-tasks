@@ -21,7 +21,7 @@ public class DependencyGraph {
         }
     }
 
-    public void releaseContinuations(Task task) throws InterruptedException, Exception {
+    public void releaseContinuations(Task task) throws Exception {
         if (!dependencyMap.containsKey(task)) {
             return; //If no key task in InverseMap, nothing depends on task, therefore return
         }

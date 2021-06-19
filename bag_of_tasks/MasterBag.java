@@ -75,7 +75,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
                 sysTask.setParameter(predecessor.getID(), predecessor.getResult());
                 submitTask(sysTask);
             } else {
-                //System.out.println("added to continuations");
                 continuations.addContinuation(predecessor, sysTask);
             }
         }
