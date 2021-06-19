@@ -10,6 +10,9 @@ abstract class Worker extends Thread {
                 work();
             } catch (RemoteException e) {
                 e.printStackTrace();
+            } catch (Exception e){
+                e.printStackTrace();
+                System.exit(-1);
             }
         }
     }
