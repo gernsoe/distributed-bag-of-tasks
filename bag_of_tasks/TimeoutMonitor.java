@@ -1,8 +1,5 @@
 package bag_of_tasks;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 
 public class TimeoutMonitor extends TimerTask {
     MasterBag masterBag;
@@ -14,16 +11,25 @@ public class TimeoutMonitor extends TimerTask {
 
     public void run() {
         synchronized (masterBag) {
+            List<UUID> toRefresh = new ArrayList<UUID>();
+            List<UUID> toTimeout = new ArrayList<UUID>();
             Iterator it = timeouts.keySet().iterator();
             while(it.hasNext()){
                 UUID nodeID = (UUID) it.next();
                 if(timeouts.get(nodeID)){
-                    timeouts.put(nodeID, false);
+                    toRefresh.add(nodeID);
                 }else{
-                    masterBag.restoreLostTasks(nodeID);
-                    timeouts.remove(nodeID);
-                    System.out.println(nodeID + " Timed out");
+                    toTimeout.add(nodeID);
                 }
+            }
+
+            for(UUID nodeID: toRefresh){
+                timeouts.put(nodeID,false);
+            }
+            for(UUID nodeID: toTimeout){
+                masterBag.restoreLostTasks(nodeID);
+                timeouts.remove(nodeID);
+                System.out.println(nodeID + " Timed out");
             }
         }
     }

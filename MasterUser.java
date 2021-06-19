@@ -16,9 +16,9 @@ class MasterUser {
 
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
-        int runs = 5;
-        int warmups = 5;
-        int tasksToRun = 50; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
+        int runs = 1;
+        int warmups = 1;
+        int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
             runStuff(masterBag,tasksToRun,false);
@@ -29,7 +29,7 @@ class MasterUser {
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuff(masterBag,tasksToRun,true);
+            runStuffFunctional(masterBag,tasksToRun,true);
         }
 
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
@@ -98,8 +98,9 @@ class MasterUser {
     }
 
     public static void runStuffFunctional(MasterUI masterBag, int numOfTasks, boolean writeToFile) throws Exception{
-        ArrayList<Task> results = new ArrayList<Task>();
+
         long startTime;
+        ArrayList<Task> results = new ArrayList<Task>();
         startTime = System.nanoTime();
         for(int i = 1; i<numOfTasks; i++){
             Task t = new squareTask(i);
