@@ -1,6 +1,8 @@
 package bag_of_tasks;
 
+import java.rmi.ConnectIOException;
 import java.rmi.RemoteException;
+import java.util.concurrent.ExecutionException;
 
 abstract class Worker extends Thread {
 
@@ -9,8 +11,6 @@ abstract class Worker extends Thread {
             try {
                 work();
             } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (Exception e){
                 e.printStackTrace();
                 System.exit(-1);
             }
