@@ -17,7 +17,7 @@ class MasterUser {
         logFileName = LogRunTime.createFile(); //Create a logfile for the results
 
         int runs = 1;
-        int warmups = 1;
+        int warmups = 0;
         int tasksToRun = 20; //amount of cycles in the loop that generates tasks, so right now it's more like taskstorun*4 tasks
         System.out.println("Warming up "+warmups+" times");
         for(int i = 0; i<warmups; i++){
@@ -106,6 +106,7 @@ class MasterUser {
             Task t = new squareTask(i);
             Task tMsg = new MessageTask("The area of a circle with radius "+i+" (r*r,area) : ");
             Task t2 = masterBag.continueWith(t,a->{
+                results.get(100);
                 try {
                     Thread.sleep(2000);
                 }catch (InterruptedException e){}

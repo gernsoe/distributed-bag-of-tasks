@@ -12,11 +12,8 @@ abstract class Worker extends Thread {
                 work();
             } catch (RemoteException e) {
                 e.printStackTrace();
-                System.exit(-1);
             }
         }
     }
-
     abstract public void work() throws RemoteException;
-
 }

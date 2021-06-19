@@ -28,6 +28,7 @@ public class DependencyGraph {
 
         Set<SystemTask> continueSet = dependencyMap.remove(task);
         for(SystemTask continueTask : continueSet){
+
             continueTask.setParameter(task.getID(), task.getResult());
             if(continueTask.getIsReady()){
                 masterBag.submitTask(continueTask);
