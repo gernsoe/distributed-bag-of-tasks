@@ -69,19 +69,16 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
         return sysTask;
     }
 
-    protected void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
-        synchronized (continuations) {
+    protected synchronized void submitIfReady(SystemTask sysTask, Task predecessor)throws Exception{
             if (predecessor.getIsDone()) {
                 sysTask.setParameter(predecessor.getID(), predecessor.getResult());
                 submitTask(sysTask);
             } else {
                 continuations.addContinuation(predecessor, sysTask);
             }
-        }
     }
 
-    public void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
-        synchronized (continuations) {
+    public synchronized void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
             if (predecessor1.getIsDone() && predecessor2.getIsDone()) {
                 sysTask.setParameter(predecessor1.getID(), predecessor1.getResult());
                 sysTask.setParameter(predecessor2.getID(), predecessor2.getResult());
@@ -96,7 +93,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
                 continuations.addContinuation(predecessor1, sysTask);
                 continuations.addContinuation(predecessor2, sysTask);
             }
-        }
     }
 
     public synchronized void restoreLostTasks(UUID nodeID){
@@ -116,19 +112,21 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID, UUID nodeID){
         try {
+
             if(!runnableTasks.containsKey(ID)) {
                 System.out.println("Duplicate result received, discarding duplicate");
                 return;
             }
             Task t = runnableTasks.remove(ID);
             t.setResult(result);
-            synchronized (continuations) {
-                continuations.releaseContinuations(t);
-            }
+
+            continuations.releaseContinuations(t);
+
             taskCount++;
             if(nodeID != this.bagID){ //Since tasks are only added to nodeTasks through getRemoteTask call, the MasterBag ID is not present in nodeTasks
                 nodeTasks.get(nodeID).remove(ID);
             }
+
         } catch (Exception e){
             System.out.println("Failed with ID: "+ID);
             e.printStackTrace();}
