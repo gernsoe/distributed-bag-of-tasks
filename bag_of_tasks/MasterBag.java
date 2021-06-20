@@ -112,7 +112,6 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
 
     public synchronized <T> void returnFinishedTask(T result, UUID ID, UUID nodeID){
         try {
-
             if(!runnableTasks.containsKey(ID)) {
                 System.out.println("Duplicate result received, discarding duplicate");
                 return;
