@@ -78,7 +78,7 @@ public class MasterBag extends BagOfTasks implements MasterAPI{
             }
     }
 
-    public synchronized void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
+    protected synchronized void submitIfReady(SystemTask sysTask, Task predecessor1, Task predecessor2)throws Exception{
             if (predecessor1.getIsDone() && predecessor2.getIsDone()) {
                 sysTask.setParameter(predecessor1.getID(), predecessor1.getResult());
                 sysTask.setParameter(predecessor2.getID(), predecessor2.getResult());

@@ -27,7 +27,7 @@ class MasterUser {
 
         long startTime = System.nanoTime();
         for(int i = 0; i<runs; i++){
-            runStuffFunctional(masterBag,tasksToRun,true);
+            runStuff(masterBag,tasksToRun,true);
         }
         double time = ((System.nanoTime()-startTime) / 1e9)/runs;
         String averageOutput = "Average execution time across "+runs+" runs: "+time+"s";
